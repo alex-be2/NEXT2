@@ -1,6 +1,6 @@
 ﻿@page "/Login"
-@layout MainLayout
 @using NEXT2.Components.Layout
+@layout MainLayout
 @using NEXT2.Data
 @inject NavigationManager Navigation
 @inject ApplicationDbContext DbContext
@@ -32,7 +32,7 @@
         </a>
         <button class="white-button margin-t-50" @onclick="logIn" >Log in <i class="fa-solid fa-caret-right"></i></button>
     </div>
-    
+
     <br />
 </div>
 
@@ -80,7 +80,6 @@
             if (email != "" && password != "")
             {
                 if (!emptyTable)
-                if (user.Email == username && user.Password == password)
                 {
                     foreach (User user in users)
                     {
@@ -96,15 +95,15 @@
                             StateHasChanged();
                         }
                     }
-                    
-                
-            }
-            else if (email == "" || password == "")
-            {
-                alert = 2;
-                StateHasChanged();
-            }
 
+
+                }
+                    else if (email == "" || password == "")
+                    {
+                        alert = 2;
+                        StateHasChanged();
+                    }
+            }
         }
         catch
         {
