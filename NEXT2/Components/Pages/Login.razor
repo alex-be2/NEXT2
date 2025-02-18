@@ -52,14 +52,24 @@
         //     users = DbContext.Users.ToList();
 
         // }
-        // catch 
+        // catch ()
         // {
         //     alert = 1;
         //     emptyTable = true;
         //     StateHasChanged();
         // }
 
-        users = DbContext.Users.ToList();
+        if (DbContext.Users != null)
+        {
+            users = DbContext.Users.ToList();
+
+        }
+        else
+        {
+            emptyTable = true;
+            alert = 1;
+            StateHasChanged();
+        }
 
     }
 
@@ -70,8 +80,8 @@
             if (email != "" && password != "")
             {
                 if (!emptyTable)
-                
-                
+                if (user.Email == username && user.Password == password)
+                {
                     foreach (User user in users)
                     {
                         if (user.Email == email && user.Password == password)

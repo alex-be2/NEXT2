@@ -1,7 +1,13 @@
 ﻿@page "/Results/{userID}"
 @using NEXT2.Components.Layout
 @layout MainLayout
+@using NEXT2.Components.Layout
+@using NEXT2.Data
+@inject ApplicationDbContext DbContext
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
 
+@email
 
 <div class="centre-content container-centre margin-t-50">
     <h1 class="text-l">Results </h1>
@@ -74,6 +80,29 @@
 </div>
 
 @code {
+    private string email;
+    private List<User> users;
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            users = DbContext.Users.ToList();
+        }
+        catch
+        {
+
+        }
+
+        foreach (User user in users)
+        {
+            if (userID == Convert.ToString(user.userID))
+            {
+                email = user.Email;
+            }
+        }
+    }
+
     [Parameter] public string userID { get; set; }
 }
 
