@@ -1,16 +1,45 @@
 ﻿@page "/Register"
 @using NEXT2.Components.Layout
 @layout MainLayout
+@using NEXT2.Components.Layout
+@using NEXT2.Data
+@inject ApplicationDbContext DbContext
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
 
 <div class="centre-content container-centre">
     <h1>Register</h1>
     <p class="margin-t-50">Enter your email address and create a password to create your profile. Once your identity is confirmed, you will be able to manage your profile.</p>
     <label class="required-field margin-t-50 text-l">Email Address:</label>
-    <InputText class="auth-input" @bind-Value="@username"></InputText>
+    <InputText class="auth-input" @bind-Value="@email"></InputText>
     <label class="required-field text-l">Password:</label>
     <InputText class="auth-input" @bind-Value="@password"></InputText>
     <label class="required-field text-l">Confirm password:</label>
-    <InputText class="auth-input" @bind-Value="@password"></InputText>
+    <InputText class="auth-input" @bind-Value="@confirmPassword"></InputText>
+    @if (alert == 0)
+    {
+        
+    }
+    else if (alert == 1)
+    {
+        <p style="color:red">Email already exists!</p>
+    }
+    else if(alert == 2)
+    {
+        <p style="color:red">Passwords do not match!</p>
+
+    }
+    else if (alert == 3)
+    {
+        <p style="color:red">Please complete required fields.</p>
+
+    }
+    else if (alert == 4)
+    {
+        <p style="color:red">Empty Db</p>
+
+    }
     <span class="margin-t-50" style=" padding-top:1px">
         Already have an account?
         <a href="Login" class="margin-t-50 auth-a" style="font-weight:bold;">Log in</a>
@@ -19,14 +48,97 @@
         <a href="" class="white-button margin-t-50 no-link">
             <i class="fa-solid fa-caret-left"></i> Back
         </a>
-        <button class="white-button margin-t-50">Register <i class="fa-solid fa-caret-right"></i></button>
+        <button class="white-button margin-t-50" @onclick="register">Register <i class="fa-solid fa-caret-right"></i></button>
     </div>
     <br />
 </div>
 
 
+
+
 @code {
-	private string username;
-	private string password;
+    private string email = "";
+    private string password = "";
+    private string confirmPassword;
+    private bool uniqueEmail = true;
+    private bool passwordMatch = false;
+    int alert = 0;
+    bool emptyTable = false;
+
+    private List<User> users;
+
+    User newUser = new User();
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            users = DbContext.Users.ToList();
+        }
+        catch
+        {
+
+        }
+    }
+
+    protected void register()
+    {
+        if (email != null && password != null && confirmPassword != null)
+        {
+            if (password == confirmPassword)
+            {
+                passwordMatch = true;
+            }
+            else
+            {
+                alert = 2;
+                StateHasChanged();
+            }
+            if (emptyTable)
+            {
+                alert = 4;
+                StateHasChanged();
+            }
+            else
+            {
+                foreach (User user in users)
+                {
+                    if (email == user.Email)
+                    {
+                        uniqueEmail = false;
+                        alert = 1;
+                        StateHasChanged();
+                        break;
+                    }
+                }
+
+            }
+            if (passwordMatch && uniqueEmail)
+            {
+                //add to db
+
+                newUser.Email = email;
+                newUser.Password = password;
+                AddUser(newUser);
+                Navigation.NavigateTo($"/Results/{newUser.userID}");
+            }
+        }
+        else
+        {
+            alert = 3;
+            StateHasChanged();
+        }
+        if(passwordMatch && uniqueEmail && !emptyTable && email != null && password != null && confirmPassword != null)
+        {
+            alert = 0;
+            StateHasChanged();
+        }
+    }
+
+    private async Task AddUser(User newuser)
+    {
+        DbContext.Users.Add(newuser);
+        await DbContext.SaveChangesAsync();
+    }
 
 }

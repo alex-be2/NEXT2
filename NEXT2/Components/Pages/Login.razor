@@ -46,6 +46,7 @@
 
     protected override void OnInitialized()
     {
+
         // try
         // {
         //     users = DbContext.Users.ToList();
@@ -59,6 +60,7 @@
         // }
 
         users = DbContext.Users.ToList();
+
     }
 
     protected void logIn()
@@ -68,6 +70,7 @@
             if (email != "" && password != "")
             {
                 if (!emptyTable)
+                if (user.Email == username && user.Password == password)
                 {
                     foreach (User user in users)
                     {
