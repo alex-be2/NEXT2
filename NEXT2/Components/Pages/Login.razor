@@ -11,9 +11,17 @@
     <h1>Log In</h1>
     <p class="margin-t-50">Enter the email address and password you used to create your profile. Once your identity is confirmed, you will be able to manage your profile.</p>
     <label class="required-field margin-t-50 text-l">Email Address:</label>
-    <InputText class="auth-input" @bind-Value="@username"></InputText>
+    <InputText class="auth-input" @bind-Value="@email"></InputText>
     <label class="required-field text-l">Password:</label>
-    <InputText class="auth-input" @bind-Value="@password"></InputText>
+    <InputText type="password" class="auth-input" @bind-Value="@password"></InputText>
+    @if (alert == 1)
+    {
+        <p style="color:red;">Email or password is incorrect, try again or create an account</p>
+    }
+    else if (alert == 2)
+    {
+        <p style="color:red;"p>Please enter your Email and password</p>
+    }
     <span class="margin-t-50" style=" padding-top:1px">
         Don't have an account?
         <a href="Register" class="margin-t-50 auth-a" style="font-weight:bold;">Register</a>
@@ -24,44 +32,75 @@
         </a>
         <button class="white-button margin-t-50" @onclick="logIn" >Log in <i class="fa-solid fa-caret-right"></i></button>
     </div>
+    
     <br />
 </div>
 
 
 @code {
-    public string username;
-    public string password;
+    public string email = "";
+    public string password = "";
     private List<User> users;
+    int alert = 0;
+    bool emptyTable = false;
 
     protected override void OnInitialized()
     {
-        try
-        {
-            users = DbContext.Users.ToList();
-        }
-        catch
-        {
-            
-        }
-        
+
+        // try
+        // {
+        //     users = DbContext.Users.ToList();
+
+        // }
+        // catch 
+        // {
+        //     alert = 1;
+        //     emptyTable = true;
+        //     StateHasChanged();
+        // }
+
+        users = DbContext.Users.ToList();
+
     }
 
     protected void logIn()
     {
-        if (username != "" || password != "")
+        try
         {
-            foreach (User user in users)
+            if (email != "" && password != "")
             {
+                if (!emptyTable)
                 if (user.Email == username && user.Password == password)
                 {
-                    Navigation.NavigateTo($"/results{user.userID}");
+                    foreach (User user in users)
+                    {
+                        if (user.Email == email && user.Password == password)
+                        {
+                            Navigation.NavigateTo($"/Results/{user.userID}");
+
+                            return;
+                        }
+                        else
+                        {
+                            alert = 1;
+                            StateHasChanged();
+                        }
+                    }
+                    
                 }
-                Navigation.NavigateTo("/Register");
             }
+            else if (email == "" || password == "")
+            {
+                alert = 2;
+                StateHasChanged();
+            }
+
         }
-        else
+        catch
         {
-            Navigation.NavigateTo("/Quiz");
+            alert = 1;
+            StateHasChanged();
         }
+        
     }
 }
