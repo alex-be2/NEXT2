@@ -1,4 +1,4 @@
-﻿@page "/Quiz/{thisquestion:int}"
+﻿@page "/Quiz/{current_node_id:int}"
 @using NEXT2.Data
 @inject ApplicationDbContext DbContext
 @inject NavigationManager Navigation
@@ -14,20 +14,140 @@
     <div class="white-container">
         <h2>Section 1</h2>
         <hr />
-        <div style="padding: 30px;">
-            <p class="text-l">@currentquestion.QuestionText</p>
-            <div class="container-space-between">
-                @for (int i = 0; i < currentanswers.Count(); i++)
-                {
-                    Answer current = currentanswers[i];
-                    <label class="container">
-                        <input type="radio" name="radio" @onclick="() => selectAnswer(current)">
-                        <span class="selection">@current.AnswerText</span>
-                    </label>
-                }
+        @foreach (Question currentQuestion in curr_questions)
+        {
+            <div style="padding: 30px;">
+                <p class="text-l">@currentQuestion.QuestionText</p>
+                <div class="container-space-between">
+                    @foreach (Answer answer in getAnswers(currentQuestion.QuestionID))
+                    {
+                        <label class="container">
+                            <input type="radio" name="radio" @onclick="() => selectAnswer(answer)">
+                            <span class="selection">@answer.AnswerText</span>
+                        </label>
+                    }
+                </div>
             </div>
+            <hr />
+        }
+
+        <div class="container-space-between height-100">
+            <button class="white-button margin-t-50"><i class="fa-solid fa-caret-left"></i> Back</button>
+            <button class="white-button margin-t-50" @onclick="NextNode">Next <i class="fa-solid fa-caret-right"></i></button>
         </div>
-        @*<hr />
+    </div>
+    <br />
+</div>
+
+@code {
+    [Parameter] public int current_node_id { get; set; }
+
+    private List<Question> curr_questions = new List<Question> { };
+    private List<Answer> curr_answers = new List<Answer> { };
+    private int[] path1 = [0, 0];
+    private int[] path2 = [0, 0];
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        getCurrs();
+
+    }
+    protected void getCurrs()
+    {
+        List<Question> all_questions = DbContext.Questions.ToList();
+        List<Answer> all_answers = DbContext.Answers.ToList();
+        List<Node> all_nodes = DbContext.Nodes.ToList();
+
+        foreach (Node n in all_nodes)
+        {
+            if (n.NodeID == current_node_id)
+            {
+                path1[0] = n.Path1;
+                path1[1] = n.Path2;
+
+                foreach (Question q in all_questions)
+                {
+                    if (q.QuestionID == n.q1_id || q.QuestionID == n.q2_id || q.QuestionID == n.q3_id)
+                    {
+                        curr_questions.Add(q);
+                    }
+                }
+                break;
+            }
+        }
+
+        foreach (Question q in curr_questions)
+        {
+            foreach (Answer a in all_answers)
+            {
+                if (a.QuestionID == q.QuestionID)
+                {
+                    curr_answers.Add(a);
+                }
+            }
+        }
+
+        // foreach (Answer a in all_answers)
+        // {
+        //     if (a.QuestionID == curr_questions[0].QuestionID)
+        //     {
+        //         curr_answers.Add(curr_questions[0].QuestionID, a);
+        //     }
+        //     else if (a.QuestionID == curr_questions[1].QuestionID)
+        //     {
+        //         curr_answers.Add(curr_questions[1].QuestionID, a);
+        //     }
+        //     else if (a.QuestionID == curr_questions[2].QuestionID)
+        //     {
+        //         curr_answers.Add(curr_questions[2].QuestionID, a);
+        //     }
+        // }
+
+
+    }
+
+    protected List<Answer> getAnswers(int q_id)
+    {
+        List<Answer> answers = new List<Answer> { };
+
+        foreach (Answer a in curr_answers)
+        {
+            if (a.QuestionID == q_id) { answers.Add(a); }
+        }
+
+        return answers;
+    }
+
+    protected void NextNode()
+    {
+        if (path1[1] > path2[1])
+        {
+            Navigation.NavigateTo($"/Quiz/{path1[0]}");
+        }
+        else
+        {
+            Navigation.NavigateTo($"/Quiz/{path2[0]}");
+        }
+
+    }
+
+    protected void selectAnswer(Answer a)
+    {
+        if (a.Path == path1[0])
+        {
+            path1[1] += 1;
+        }
+        else if (a.Path == path2[0])
+        {
+            path2[1] += 1;
+        }
+    }
+
+}
+
+
+@*<hr />
     <div style="padding: 30px;">
         <h4 class="text-l">Question 2</h4>
         <p class="text-l">How much experience do you have working in a team?</p>
@@ -47,51 +167,3 @@
             <input type="range" min="1" max="10" class="slider"/>
         </div>
     </div> *@
-
-        <hr />
-        <div class="container-space-between height-100">
-            <button class="white-button margin-t-50"><i class="fa-solid fa-caret-left"></i> Back</button>
-            <button class="white-button margin-t-50" @onclick="NextQuestion">Next <i class="fa-solid fa-caret-right"></i></button>
-        </div>
-    </div>
-    <br />
-</div>
-
-@code {
-    private List<Answer> answers = new List<Answer> { };
-    private List<Question> questions = new List<Question> { };
-    private List<Answer> currentanswers = new List<Answer> { };
-    [Parameter] public int thisquestion { get; set; }
-    Question currentquestion = new Question();
-    Answer selectedanswer = new Answer();
-
-    protected override async Task OnInitializedAsync()
-    {
-        answers = DbContext.Answers.ToList();
-        questions = DbContext.Questions.ToList();
-
-        foreach (Question question in questions)
-        {
-            if (question.QuestionID == thisquestion)
-            {
-                currentquestion = question;
-                break;
-            }
-        }
-        foreach (Answer answer in answers)
-        {
-            if (answer.QuestionID == currentquestion.QuestionID)
-            {
-                currentanswers.Add(answer);
-            }
-        }
-    }
-    protected void NextQuestion() => Navigation.NavigateTo($"/Quiz/{selectedanswer.NextQuestionID}");
-
-    protected void selectAnswer(Answer a)
-    {
-        selectedanswer = a;
-    }
-
-}
-
