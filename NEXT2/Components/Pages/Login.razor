@@ -35,7 +35,15 @@
 
     protected override void OnInitialized()
     {
-        users = DbContext.Users.ToList();
+        try
+        {
+            users = DbContext.Users.ToList();
+        }
+        catch
+        {
+            
+        }
+        
     }
 
     protected void logIn()
@@ -44,7 +52,7 @@
         {
             foreach (User user in users)
             {
-                if (user.Email == username && user.PasswordHash == password)
+                if (user.Email == username && user.Password == password)
                 {
                     Navigation.NavigateTo($"/results{user.userID}");
                 }
