@@ -1,8 +1,8 @@
-﻿@page "/Quiz/{thisquestion}"
-@using Next2_BlazorServerApplication.Data
+﻿@page "/Quiz/{thisquestion:int}"
+@using NEXT2.Data
 @inject ApplicationDbContext DbContext
 @inject NavigationManager Navigation
-
+@rendermode InteractiveServer
 @layout MainLayout
 
 <div class="centre-content container-centre margin-t-50">
@@ -17,11 +17,11 @@
         <div style="padding: 30px;">
             <p class="text-l">@currentquestion.QuestionText</p>
             <div class="container-space-between">
-                @for (int i = 1; i < currentanswers.Count() + 1; i++)
+                @for (int i = 0; i < currentanswers.Count(); i++)
                 {
                     Answer current = currentanswers[i];
                     <label class="container">
-                        <input type="radio" name="radio" @onclick="() => selectAnswer(i)">
+                        <input type="radio" name="radio" @onclick="() => selectAnswer(current)">
                         <span class="selection">@current.AnswerText</span>
                     </label>
                 }
@@ -58,9 +58,9 @@
 </div>
 
 @code {
-    private List<Answer> answers;
-    private List<Question> questions;
-    private List<Answer> currentanswers;
+    private List<Answer> answers = new List<Answer> { };
+    private List<Question> questions = new List<Question> { };
+    private List<Answer> currentanswers = new List<Answer> { };
     [Parameter] public int thisquestion { get; set; }
     Question currentquestion = new Question();
     Answer selectedanswer = new Answer();
@@ -86,20 +86,11 @@
             }
         }
     }
-    private void NextQuestion()
-    {
-        Navigation.NavigateTo($"/Quiz/{selectedanswer.NextQuestionID}");
-    }
+    protected void NextQuestion() => Navigation.NavigateTo($"/Quiz/{selectedanswer.NextQuestionID}");
 
-    protected void selectAnswer(int i)
+    protected void selectAnswer(Answer a)
     {
-        foreach (Answer answer in currentanswers)
-        {
-            if (answer.AnswerID == i)
-            {
-                selectedanswer = answer;
-            }
-        }
+        selectedanswer = a;
     }
 
 }
