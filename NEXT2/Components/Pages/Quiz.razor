@@ -1,6 +1,8 @@
-﻿@page "/Quiz"
-@using NEXT2.Components.Layout
-
+﻿@page "/Quiz/{thisquestion:int}"
+@using NEXT2.Data
+@inject ApplicationDbContext DbContext
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
 @layout MainLayout
 
 <div class="centre-content container-centre margin-t-50">
@@ -9,36 +11,23 @@
         <p>100% complete</p>
     </div>
     @*questions container*@
-<div class="white-container">
-    <h2>Section 1</h2>
-    <hr />
-    <div style="padding: 30px;">
-        <h4 class="text-l">Question 1</h4>
-        <p class="text-l">How much experience do you have working in a team?</p>
-        <div class="container-space-between">
-                <label class="container">
-                    <input type="radio" name="radio">
-                    <span class="selection">0 years</span>
-                </label>
-                <label class="container">
-                    <input type="radio" name="radio">
-                    <span class="selection">1-2 years</span>
-                </label>
-                <label class="container">
-                    <input type="radio" name="radio">
-                    <span class="selection">2-5 years</span>
-                </label>
-                <label class="container">
-                    <input type="radio" name="radio">
-                    <span class="selection">5-10 years</span>
-                </label>
-                <label class="container">
-                    <input type="radio" name="radio">
-                    <span class="selection">10 years+</span>
-                </label>
+    <div class="white-container">
+        <h2>Section 1</h2>
+        <hr />
+        <div style="padding: 30px;">
+            <p class="text-l">@currentquestion.QuestionText</p>
+            <div class="container-space-between">
+                @for (int i = 0; i < currentanswers.Count(); i++)
+                {
+                    Answer current = currentanswers[i];
+                    <label class="container">
+                        <input type="radio" name="radio" @onclick="() => selectAnswer(current)">
+                        <span class="selection">@current.AnswerText</span>
+                    </label>
+                }
             </div>
-    </div>
-    <hr />
+        </div>
+        @*<hr />
     <div style="padding: 30px;">
         <h4 class="text-l">Question 2</h4>
         <p class="text-l">How much experience do you have working in a team?</p>
@@ -57,56 +46,52 @@
             </div>
             <input type="range" min="1" max="10" class="slider"/>
         </div>
-    </div>
-    <hr />
-        <div style="padding: 30px;">
-            <h4 class="text-l">Question 3</h4>
-            <p class="text-l">How much experience do you have working in a team?</p>
-            <div class="container-space-between">
-                <label class="container text-l">
-                    <input type="radio" name="radio">
-                    <span class="selection">0 years</span>
-                </label>
-                <label class="container">
-                    <input type="radio" name="radio">
-                    <span class="selection">1-2 years</span>
-                </label>
-                <label class="container">
-                    <input type="radio" name="radio">
-                    <span class="selection">2-5 years</span>
-                </label>
-                <label class="container">
-                    <input type="radio" name="radio">
-                    <span class="selection">5-10 years</span>
-                </label>
-                <label class="container">
-                    <input type="radio" name="radio">
-                    <span class="selection">10 years+</span>
-                </label>
-            </div>
-        </div>
-    <hr />
-    <div style="padding: 30px;">
-        <h4 class="text-l">Question 1</h4>
-        <p class="text-l">How much experience do you have working in a team?</p>
-        <div class="container-space-between">
-            <div class="white-button">0yrs</div>
-            <div class="white-button">1-2yrs</div>
-            <div class="white-button">2-4yrs</div>
-            <div class="white-button-selected">4-10yrs</div>
-            <div class="white-button">10+yrs</div>
+    </div> *@
+
+        <hr />
+        <div class="container-space-between height-100">
+            <button class="white-button margin-t-50"><i class="fa-solid fa-caret-left"></i> Back</button>
+            <button class="white-button margin-t-50" @onclick="NextQuestion">Next <i class="fa-solid fa-caret-right"></i></button>
         </div>
     </div>
-    <hr />
-    <div class="container-space-between height-100">
-        <button class="white-button margin-t-50"><i class="fa-solid fa-caret-left"></i> Back</button>
-        <button class="white-button margin-t-50">Next <i class="fa-solid fa-caret-right"></i></button>
-    </div>
-</div>
     <br />
 </div>
 
 @code {
+    private List<Answer> answers = new List<Answer> { };
+    private List<Question> questions = new List<Question> { };
+    private List<Answer> currentanswers = new List<Answer> { };
+    [Parameter] public int thisquestion { get; set; }
+    Question currentquestion = new Question();
+    Answer selectedanswer = new Answer();
+
+    protected override async Task OnInitializedAsync()
+    {
+        answers = DbContext.Answers.ToList();
+        questions = DbContext.Questions.ToList();
+
+        foreach (Question question in questions)
+        {
+            if (question.QuestionID == thisquestion)
+            {
+                currentquestion = question;
+                break;
+            }
+        }
+        foreach (Answer answer in answers)
+        {
+            if (answer.QuestionID == currentquestion.QuestionID)
+            {
+                currentanswers.Add(answer);
+            }
+        }
+    }
+    protected void NextQuestion() => Navigation.NavigateTo($"/Quiz/{selectedanswer.NextQuestionID}");
+
+    protected void selectAnswer(Answer a)
+    {
+        selectedanswer = a;
+    }
 
 }
 
