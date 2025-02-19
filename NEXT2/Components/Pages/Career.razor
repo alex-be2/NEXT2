@@ -10,12 +10,13 @@
 	<h1 style="color:forestgreen">@department.DepartmentName</h1>
 	<p>@department.DepartmentDesc</p>
 	<div>
-	<img src="@department.Img" style="max-width:50%"/>
+		<img src="@department.Img" style="max-width:50%" />
 	</div>
 </div>
 
 @code {
 	[Parameter] public int current_node_id { get; set; }
+
 	public List<Departments> careers = new List<Departments> {};
 	public Departments department = new Departments();
 	
