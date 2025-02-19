@@ -12,7 +12,7 @@ namespace NEXT2.Data
 		public DbSet<Answer> AnswersNew { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Node> NodesNew { get; set; }
-        public DbSet<UserAnswer> UserAnswers { get; set; }
+        public DbSet<UserAnswer> UserAnswersNew { get; set; }
     }
 
 
@@ -37,7 +37,7 @@ public class Answer
     public int AnswerID { get; set; }
     public int QuestionID { get; set; }
     public string AnswerText { get; set; }
-    public int Path { get; set; }
+    public int? Path { get; set; }
 
 }
 
@@ -58,14 +58,15 @@ public class Node
     public int Question3ID { get; set; }
     public int Path1 { get; set; }
     public int Path2 { get; set; }
-    public int ParentNodeId { get; set; }
+    public int? ParentNodeId { get; set; }
 }
 
 public class UserAnswer
 {
-    [Key]
+    //[Key]
+    public int UserAnswerID { get; set; }
+    public int SessionID { get; set; }
     public int AnswerID { get; set; }
     public int QuestionID { get; set; }
-    public int UserID { get; set; }
     public int NodeID { get; set; }
 }

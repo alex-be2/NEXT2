@@ -1,5 +1,7 @@
 ﻿@page "/"
 @inject NavigationManager Navigator
+@using NEXT2.Data
+@inject ApplicationDbContext DbContext
 @rendermode InteractiveServer
 
 <PageTitle>Index</PageTitle>
@@ -23,6 +25,17 @@
 @code {
     private void StartQuiz()
     {
-        Navigator.NavigateTo($"/Quiz/{1}");
+        List<UserAnswer> all_user_answers = DbContext.UserAnswersNew.ToList();
+
+        int next_session_id = 0;
+
+        if (all_user_answers.Count() != 0)
+        {
+            next_session_id = all_user_answers.Last().SessionID + 1;
+        }
+
+        Navigator.NavigateTo($"/Quiz/{1}/{next_session_id}");
     }
+
+    
 }
