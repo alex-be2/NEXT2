@@ -1,13 +1,28 @@
 ﻿@page "/Results/{userID}"
 @using NEXT2.Components.Layout
-@layout MainLayout
+@layout LoggedInLayout
 @using NEXT2.Components.Layout
 @using NEXT2.Data
 @inject ApplicationDbContext DbContext
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
-@email
+@* @{
+    if (userID == null)
+    {
+        useMainLayout = true;
+        @layout MainLayout
+    }
+    else
+    {
+        @layout LoggedInLayout
+        useMainLayout = false;
+    }
+    // Layout = useMainLayout ? typeof(MainLayout) : typeof(LoggedInLayout);
+
+
+} *@
+
 
 <div class="centre-content container-centre margin-t-50">
     <h1 class="text-l">Results </h1>
@@ -80,8 +95,20 @@
 </div>
 
 @code {
+    //private LoggedInLayout loggedInLayout;
+    //private string layoutSelect;
+    private bool useMainLayout = true;
     private string email;
     private List<User> users;
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     loggedInLayout = Layout?.Value;
+    //     if (loggedInLayout != null)
+    //     {
+    //         loggedInLayout.userid = userID;
+    //     }
+    // }
 
     protected override void OnInitialized()
     {
@@ -99,6 +126,7 @@
             if (userID == Convert.ToString(user.userID))
             {
                 email = user.Email;
+                break;
             }
         }
     }
