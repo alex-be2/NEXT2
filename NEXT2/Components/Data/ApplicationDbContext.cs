@@ -57,8 +57,8 @@ public class Node
     public int Question1ID { get; set; }
     public int Question2ID { get; set; }
     public int Question3ID { get; set; }
-    public int Path1 { get; set; }
-    public int Path2 { get; set; }
+    public int? Path1 { get; set; }
+    public int? Path2 { get; set; }
     public int? ParentNodeId { get; set; }
 }
 

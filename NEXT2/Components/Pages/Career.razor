@@ -16,9 +16,10 @@
 
 @code {
 	[Parameter] public int current_node_id { get; set; }
-	public List<Departments> careers = new List<Departments> { };
-	public Departments department = new Departments();
 
+	public List<Departments> careers = new List<Departments> {};
+	public Departments department = new Departments();
+	
 	protected override async Task OnInitializedAsync()
 	{
 		getDepartments();
@@ -38,4 +39,3 @@
 		}
 	}
 }
-
