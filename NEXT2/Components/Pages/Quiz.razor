@@ -236,12 +236,27 @@
             missingAnswers = false;
             if (path1 > path2)
             {
-                Navigation.NavigateTo($"/Quiz/{current_node.Path1}/{current_session_id}");
+                if (current_node.Path1 < 1000)
+                {
+                    Navigation.NavigateTo($"/Quiz/{current_node.Path1}/{current_session_id}");
+                }
+                else
+                {
+                    Navigation.NavigateTo($"/Career/{current_node.Path1}");
+                }
             }
             else
             {
-                Navigation.NavigateTo($"/Quiz/{current_node.Path2}/{current_session_id}");
+                if (current_node.Path1 < 1000)
+                {
+                    Navigation.NavigateTo($"/Quiz/{current_node.Path2}/{current_session_id}");
+                }
+                else
+                {
+                    Navigation.NavigateTo($"/Career/{current_node.Path2}");
+                }
             }
+
         }
         else { missingAnswers = true; }
     }

@@ -13,6 +13,7 @@ namespace NEXT2.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Node> NodesNew { get; set; }
         public DbSet<UserAnswer> UserAnswersNew { get; set; }
+        public DbSet<Departments> Departments { get; set; }
     }
 
 
@@ -69,4 +70,13 @@ public class UserAnswer
     public int AnswerID { get; set; }
     public int QuestionID { get; set; }
     public int NodeID { get; set; }
+}
+
+public class Departments
+{
+    [Key]
+    public int DepartmentID { get; set; }
+    public string DepartmentName { get; set; }
+    public string? DepartmentDesc { get; set; }
+    public string? Img { get; set; }
 }

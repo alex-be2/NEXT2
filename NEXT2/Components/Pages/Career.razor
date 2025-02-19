@@ -1,0 +1,41 @@
+﻿@page "/Career/{current_node_id:int}"
+@using NEXT2.Data
+@inject ApplicationDbContext DbContext
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+@layout MainLayout
+
+<div class="centre-content container-centre margin-t-50">
+	<h1><b>Department:</b></h1>
+	<h1 style="color:forestgreen">@department.DepartmentName</h1>
+	<p>@department.DepartmentDesc</p>
+	<div>
+		<img src="@department.Img" style="max-width:50%" />
+	</div>
+</div>
+
+@code {
+	[Parameter] public int current_node_id { get; set; }
+	public List<Departments> careers = new List<Departments> { };
+	public Departments department = new Departments();
+
+	protected override async Task OnInitializedAsync()
+	{
+		getDepartments();
+
+	}
+
+	protected void getDepartments()
+	{
+		careers = DbContext.Departments.ToList();
+
+		foreach (Departments d in careers)
+		{
+			if (d.DepartmentID == current_node_id)
+			{
+				department = d;
+			}
+		}
+	}
+}
+
