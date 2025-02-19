@@ -50,7 +50,7 @@
 
         <hr />
         <div class="container-space-between height-100">
-            <button class="white-button margin-t-50"><i class="fa-solid fa-caret-left"></i> Back</button>
+            <button class="white-button margin-t-50" @onclick="PreviousQuesion">Back<i class="fa-solid fa-caret-left"></i> </button>
             <button class="white-button margin-t-50" @onclick="NextQuestion">Next <i class="fa-solid fa-caret-right"></i></button>
         </div>
     </div>
@@ -87,6 +87,17 @@
         }
     }
     protected void NextQuestion() => Navigation.NavigateTo($"/Quiz/{selectedanswer.NextQuestionID}");
+
+    protected void PreviousQuesion(){
+        if (currentquestion.ParentQuestionID > 0)
+        {
+            Navigation.NavigateTo($"/Quiz/{currentquestion.ParentQuestionID}");
+        }
+        else
+        {
+            Navigation.NavigateTo($"/");
+        }
+    }
 
     protected void selectAnswer(Answer a)
     {
