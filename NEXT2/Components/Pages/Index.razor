@@ -21,6 +21,14 @@
 
 
 @code {
+
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     if (firstRender)
+    //     {
+    //         StateHasChanged();
+    //     }
+    // }
     private void StartQuiz()
     {
         Navigator.NavigateTo($"/Quiz/{1}");
