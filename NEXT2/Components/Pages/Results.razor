@@ -1,27 +1,11 @@
 ﻿@page "/Results/{userID}"
 @using NEXT2.Components.Layout
-@layout LoggedInLayout
-@using NEXT2.Components.Layout
+@using NEXT2.Components.Models
+@layout ResultsLayout
 @using NEXT2.Data
 @inject ApplicationDbContext DbContext
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
-
-@* @{
-    if (userID == null)
-    {
-        useMainLayout = true;
-        @layout MainLayout
-    }
-    else
-    {
-        @layout LoggedInLayout
-        useMainLayout = false;
-    }
-    // Layout = useMainLayout ? typeof(MainLayout) : typeof(LoggedInLayout);
-
-
-} *@
 
 
 <div class="centre-content container-centre margin-t-50">
@@ -94,21 +78,28 @@
     </div>
 </div>
 
+<div class="centre-content container-centre">
+
+    @if (userID == null)
+    {
+        <span style=" margin-top:20px">
+            <a href="Login" class="margin-t-50 auth-a" style="font-weight:bold;">Log in </a>
+            to save your results or 
+            <a href="Register" class="margin-t-50 auth-a" style="font-weight:bold;">Register</a>
+            if you dont yet have an account.
+
+        </span>
+    }
+</div>
+
+
 @code {
-    //private LoggedInLayout loggedInLayout;
-    //private string layoutSelect;
-    private bool useMainLayout = true;
     private string email;
     private List<User> users;
 
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     loggedInLayout = Layout?.Value;
-    //     if (loggedInLayout != null)
-    //     {
-    //         loggedInLayout.userid = userID;
-    //     }
-    // }
+    public UserModel userModel = new UserModel();
+
+    [CascadingParameter] public EventCallback<UserModel> userLayout { get;set; }
 
     protected override void OnInitialized()
     {
@@ -129,6 +120,10 @@
                 break;
             }
         }
+
+        userModel.userID = userID;
+        userModel.email = email;
+        userLayout.InvokeAsync(userModel);
     }
 
     [Parameter] public string userID { get; set; }
