@@ -64,10 +64,11 @@ public class Node
 
 public class UserAnswer
 {
-    [Key]
+    //[Key]
+    public int UserAnswerID { get; set; }
+    public int SessionID { get; set; }
     public int AnswerID { get; set; }
     public int QuestionID { get; set; }
-    public int UserID { get; set; }
     public int NodeID { get; set; }
 }
 

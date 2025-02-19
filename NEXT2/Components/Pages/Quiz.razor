@@ -1,4 +1,4 @@
-﻿@page "/Quiz/{current_node_id:int}"
+﻿@page "/Quiz/{current_node_id:int}/{current_session_id:int}"
 @using NEXT2.Data
 @inject ApplicationDbContext DbContext
 @inject NavigationManager Navigation
@@ -22,10 +22,20 @@
                 <div class="container-space-between">
                     @foreach (Answer answer in getAnswers(currentQuestion.QuestionID))
                     {
-                        <label class="container">
-                            <input type="radio" name="@rName" @onclick="() => selectAnswer(answer)">
-                            <span class="selection">@answer.AnswerText</span>
-                        </label>
+                        @if (getChecked(answer.AnswerID))
+                        {
+                            <label class="container">
+                                <input type="radio" checked name="@rName" @onclick="() => selectAnswer(answer)">
+                                <span class="selection">@answer.AnswerText</span>
+                            </label>
+                        }
+                        else
+                        {
+                            <label class="container">
+                                <input type="radio" name="@rName" @onclick="() => selectAnswer(answer)">
+                                <span class="selection">@answer.AnswerText</span>
+                            </label>
+                        }
                     }
                 </div>
             </div>
@@ -47,13 +57,16 @@
 
 @code {
     [Parameter] public int current_node_id { get; set; }
+    [Parameter] public int current_session_id { get; set; }
 
     private List<Question> curr_questions = new List<Question> { };
     private List<Answer> curr_answers = new List<Answer> { };
+    private List<UserAnswer> all_user_answers = new List<UserAnswer> { };
     private Answer[] user_answers = new Answer[3];
     Node current_node = new Node();
 
     private bool missingAnswers = false;
+    private bool savedAnswers = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -65,6 +78,7 @@
         List<Question> all_questions = DbContext.QuestionsNew.ToList();
         List<Answer> all_answers = DbContext.AnswersNew.ToList();
         List<Node> all_nodes = DbContext.NodesNew.ToList();
+        all_user_answers = DbContext.UserAnswersNew.ToList();
 
         foreach (Node n in all_nodes)
         {
@@ -94,23 +108,66 @@
             }
         }
 
-        // foreach (Answer a in all_answers)
-        // {
-        //     if (a.QuestionID == curr_questions[0].QuestionID)
-        //     {
-        //         curr_answers.Add(curr_questions[0].QuestionID, a);
-        //     }
-        //     else if (a.QuestionID == curr_questions[1].QuestionID)
-        //     {
-        //         curr_answers.Add(curr_questions[1].QuestionID, a);
-        //     }
-        //     else if (a.QuestionID == curr_questions[2].QuestionID)
-        //     {
-        //         curr_answers.Add(curr_questions[2].QuestionID, a);
-        //     }
-        // }
+        foreach (UserAnswer a in all_user_answers)
+        {
+            if (a.NodeID == current_node_id && a.SessionID == current_session_id)
+            {
+                savedAnswers = true;
 
+                if (a.QuestionID == curr_questions[0].QuestionID)
+                {
+                    user_answers[0] = GetAnswer(a.AnswerID, all_answers);
+                }
+                else if (a.QuestionID == curr_questions[1].QuestionID)
+                {
+                    user_answers[1] = GetAnswer(a.AnswerID, all_answers);
+                }
+                else if (a.QuestionID == curr_questions[2].QuestionID)
+                {
+                    user_answers[2] = GetAnswer(a.AnswerID, all_answers);
+                }
+            }
+        }
+    }
 
+    protected bool getChecked(int id)
+    {
+        if (savedAnswers)
+        {
+            foreach (Answer a in user_answers)
+            {
+                if (a.AnswerID == id)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected UserAnswer getUserAnswer (int id)
+    {
+        foreach (UserAnswer answer in all_user_answers)
+        {
+            if (answer.AnswerID == id)
+            {
+                return answer;
+            }
+        }
+        return new UserAnswer();
+    }
+
+    protected Answer GetAnswer(int id, List<Answer> answer_list)
+    {
+        foreach (Answer answer in answer_list)
+        {
+            if (answer.AnswerID == id)
+            {
+                return answer;
+            }
+        }
+        return new Answer();
     }
 
     protected List<Answer> getAnswers(int q_id)
@@ -150,7 +207,8 @@
 
     protected string getCompletion()
     {
-        return (Convert.ToInt32(getSecNum()) / 4).ToString();
+        // return (Convert.ToInt32(getSecNum()) / 4).ToString();
+        return "";
     }
 
     protected void NextNode()
@@ -177,6 +235,7 @@
 
         if (path1+path2 == 3)
         {
+            updateDB();
             missingAnswers = false;
             if (path1 > path2)
             {
@@ -204,6 +263,76 @@
         else { missingAnswers = true; }
     }
 
+    protected void updateDB()
+    {
+        bool QuestionsExist = false;
+
+        foreach (UserAnswer a in all_user_answers)
+        {
+            if (current_node_id == a.NodeID && current_session_id == a.SessionID)
+            {
+                QuestionsExist = true;
+                break;
+            }
+        }
+
+        if (QuestionsExist)
+        {
+            UpdateUserAnswer();
+        }
+        else
+        {
+            foreach (Answer a in user_answers)
+            {
+                UserAnswer x = new UserAnswer();
+                x.SessionID = current_session_id;
+                x.NodeID = current_node_id;
+                x.QuestionID = a.QuestionID;
+                x.AnswerID = a.AnswerID;
+
+                AddUserAnswers();
+            }
+        }
+
+    }
+
+    private async Task AddUserAnswers()
+    {
+        foreach (Answer a in user_answers)
+        {
+            UserAnswer x = new UserAnswer();
+            x.SessionID = current_session_id;
+            x.NodeID = current_node_id;
+            x.QuestionID = a.QuestionID;
+            x.AnswerID = a.AnswerID;
+
+            DbContext.UserAnswersNew.Add(x);
+
+        }
+
+        await DbContext.SaveChangesAsync();
+
+    }
+
+    private async Task UpdateUserAnswer()
+    {
+        foreach (Answer a in user_answers)
+        {
+            UserAnswer x = getUserAnswer(a.AnswerID);
+            UserAnswer existingUserAnswer = await DbContext.UserAnswersNew.FindAsync(x.UserAnswerID);
+            if (existingUserAnswer != null)
+            {
+                if (existingUserAnswer.AnswerID != x.AnswerID)
+                {
+                    existingUserAnswer.AnswerID = x.AnswerID;
+                    DbContext.UserAnswersNew.Update(existingUserAnswer);
+                }
+            }
+        }
+       
+        await DbContext.SaveChangesAsync();
+    }
+
     protected void PrevNode()
     {
         if (current_node.ParentNodeId == 0)
@@ -212,7 +341,7 @@
         }
         else
         {
-            Navigation.NavigateTo($"/Quiz/{current_node.ParentNodeId}");
+            Navigation.NavigateTo($"/Quiz/{current_node.ParentNodeId}/{current_session_id}");
         }
     }
 
