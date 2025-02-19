@@ -38,7 +38,7 @@
         }
 
         <div class="container-space-between height-100">
-            <button class="white-button margin-t-50"><i class="fa-solid fa-caret-left"></i> Back</button>
+            <button class="white-button margin-t-50" @onclick="PrevNode"><i class="fa-solid fa-caret-left"></i> Back</button>
             <button class="white-button margin-t-50" @onclick="NextNode">Next <i class="fa-solid fa-caret-right"></i></button>
         </div>
     </div>
@@ -185,6 +185,18 @@
             }
         }
         else { missingAnswers = true; }
+    }
+
+    protected void PrevNode()
+    {
+        if (current_node.ParentNodeId == 0)
+        {
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            Navigation.NavigateTo($"/Quiz/{current_node.ParentNodeId}");
+        }
     }
 
     protected void selectAnswer(Answer a)

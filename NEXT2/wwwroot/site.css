@@ -126,7 +126,10 @@ h1 {
     padding: 50px
 }
 
-
+.nav-link:visited , .nav-link:hover, .nav-link:active, .nav-link:focus{
+    color: black;
+    text-decoration: none;
+}
 
 #blazor-error-ui {
     background: lightyellow;
