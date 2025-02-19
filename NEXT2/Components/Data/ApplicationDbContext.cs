@@ -12,7 +12,7 @@ namespace NEXT2.Data
 		public DbSet<Answer> AnswersNew { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Node> NodesNew { get; set; }
-        public DbSet<UserAnswer> UserAnswers { get; set; }
+        public DbSet<UserAnswer> UserAnswersNew { get; set; }
         public DbSet<Departments> Departments { get; set; }
     }
 
