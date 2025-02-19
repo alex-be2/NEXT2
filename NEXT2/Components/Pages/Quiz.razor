@@ -218,13 +218,16 @@
 
         foreach (Answer a in user_answers)
         {
-            if (a.Path == current_node.Path1)
+            if (a != null)
             {
-                path1 += 1;
-            }
-            else if (a.Path == current_node.Path2)
-            {
-                path2 += 1;
+                if (a.Path == current_node.Path1)
+                {
+                    path1 += 1;
+                }
+                else if (a.Path == current_node.Path2)
+                {
+                    path2 += 1;
+                }
             }
         }
 
@@ -236,11 +239,25 @@
             missingAnswers = false;
             if (path1 > path2)
             {
-                Navigation.NavigateTo($"/Quiz/{current_node.Path1}/{current_session_id}");
+                if (current_node.Path1 < 1000)
+                {
+                    Navigation.NavigateTo($"/Quiz/{current_node.Path1}");
+                }
+                else
+                {
+                    Navigation.NavigateTo($"/Career/{current_node.Path1}");
+                }
             }
             else
             {
-                Navigation.NavigateTo($"/Quiz/{current_node.Path2}/{current_session_id}");
+                if (current_node.Path1 < 1000)
+                {
+                    Navigation.NavigateTo($"/Quiz/{current_node.Path2}");
+                }
+                else
+                {
+                    Navigation.NavigateTo($"/Career/{current_node.Path2}");
+                }
             }
         }
         else { missingAnswers = true; }
