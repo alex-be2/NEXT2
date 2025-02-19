@@ -150,7 +150,7 @@
     {
         foreach (UserAnswer answer in all_user_answers)
         {
-            if (answer.AnswerID == id)
+            if (answer.QuestionID == id && answer.SessionID == current_session_id)
             {
                 return answer;
             }
@@ -301,18 +301,17 @@
     {
         foreach (Answer a in user_answers)
         {
-            UserAnswer x = getUserAnswer(a.AnswerID);
-            UserAnswer existingUserAnswer = await DbContext.UserAnswersNew.FindAsync(x.UserAnswerID);
+            UserAnswer x = getUserAnswer(a.QuestionID); // gets the user answer object assocciated with that answer a object
+            UserAnswer existingUserAnswer = await DbContext.UserAnswersNew.FindAsync(x.UserAnswerID); //gets the object with the correct user answer id from db
             if (existingUserAnswer != null)
             {
-                if (existingUserAnswer.AnswerID != x.AnswerID)
+                if (existingUserAnswer.AnswerID != a.AnswerID)// if the existing record has a different answer id to the new answerid
                 {
-                    existingUserAnswer.AnswerID = x.AnswerID;
+                    existingUserAnswer.AnswerID = a.AnswerID;//replace db record
                     DbContext.UserAnswersNew.Update(existingUserAnswer);
                 }
             }
         }
-       
         await DbContext.SaveChangesAsync();
     }
 
