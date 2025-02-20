@@ -7,9 +7,9 @@
 
 <div class="centre-content container-centre margin-t-50">
     @*progress bar*@
-    <div class="progress-b">
-        <p>@getCompletion() complete</p>
+        <div style="background-color: black; border-radius: 5px; height: 40px; border: 3px solid black; width: @getCompletion()%">
     </div>
+    <p>@getCompletion()% complete</p>
     @*questions container*@
     <div class="white-container">
         <h2>Section @getSecNum()</h2>
@@ -207,8 +207,7 @@
 
     protected string getCompletion()
     {
-        // return (Convert.ToInt32(getSecNum()) / 4).ToString();
-        return "";
+        return (Math.Round((float.Parse(getSecNum())-1) / 3 * 100,1)).ToString();
     }
 
     protected void NextNode()
