@@ -84,6 +84,7 @@
 
     protected void register()
     {
+
         if (email != null && password != null && confirmPassword != null)
         {
             if (password == confirmPassword)
@@ -110,6 +111,10 @@
                         alert = 1;
                         StateHasChanged();
                         break;
+                    }
+                    else
+                    {
+                        uniqueEmail = true;
                     }
                 }
 
