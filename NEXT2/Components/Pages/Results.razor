@@ -1,4 +1,4 @@
-﻿@page "/Results/{userID}"
+﻿@page "/Results/{userID}/{quizComplete}"
 @using NEXT2.Components.Layout
 @using NEXT2.Components.Models
 @layout ResultsLayout
@@ -7,90 +7,133 @@
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
-
-<div class="centre-content container-centre margin-t-50">
-    <h1 class="text-l">Results </h1>
-    <div class="white-container container-flex">
-        <div class="compatibility-bar">
-            <div class="percent">
-                <p style="font-size: 24pt; margin: 0;">75%</p>
-                <p>compatible</p>
-            </div>
-        </div>
-        <div>
-            <div class="container-space-between" style="align-items: baseline;">
-                <h3 style="margin-left:15px;">Job title</h3>
-                <button class="white-button">Apply here</button>
-            </div>
-            <div style="width:600px; padding:15px;">
-                <div class="container-space-between" style="width: 420px">
-                    <p>location</p>
-                    <p>salary</p>
-                    <p>hours</p>
+@if (quizComplete == "True")
+{
+    <div class="centre-content container-centre margin-t-50">
+        <h1 class="text-l">Results </h1>
+        <div class="white-container container-flex">
+            <div class="compatibility-bar">
+                <div class="percent">
+                    <p style="font-size: 24pt; margin: 0;">75%</p>
+                    <p>compatible</p>
                 </div>
             </div>
-        </div>
-
-    </div>
-    <div class="white-container container-flex">
-        <div class="compatibility-bar">
-            <div class="percent">
-                <p style="font-size: 24pt; margin: 0;">75%</p>
-                <p>compatible</p>
-            </div>
-        </div>
-        <div>
-            <div class="container-space-between" style="align-items: baseline;">
-                <h3 style="margin-left:15px;">Job title</h3>
-                <button class="white-button">Apply here</button>
-            </div>
-            <div style="width:600px; padding:15px;">
-                <div class="container-space-between" style="width: 420px">
-                    <p>location</p>
-                    <p>salary</p>
-                    <p>hours</p>
+            <div>
+                <div class="container-space-between" style="align-items: baseline;">
+                    <h3 style="margin-left:15px;">Job title</h3>
+                    <button class="white-button">Apply here</button>
+                </div>
+                <div style="width:600px; padding:15px;">
+                    <div class="container-space-between" style="width: 420px">
+                        <p>location</p>
+                        <p>salary</p>
+                        <p>hours</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-    </div>
-    <div class="white-container container-flex">
-        <div class="compatibility-bar">
-            <div class="percent">
-                <p style="font-size: 24pt; margin: 0;">75%</p>
-                <p>compatible</p>
-            </div>
         </div>
-        <div>
-            <div class="container-space-between" style="align-items: baseline;">
-                <h3 style="margin-left:15px;">Job title</h3>
-                <button class="white-button">Apply here</button>
-            </div>
-            <div style="width:600px; padding:15px;">
-                <div class="container-space-between" style="width: 420px">
-                    <p>location</p>
-                    <p>salary</p>
-                    <p>hours</p>
+        <div class="white-container container-flex">
+            <div class="compatibility-bar">
+                <div class="percent">
+                    <p style="font-size: 24pt; margin: 0;">75%</p>
+                    <p>compatible</p>
                 </div>
             </div>
+            <div>
+                <div class="container-space-between" style="align-items: baseline;">
+                    <h3 style="margin-left:15px;">Job title</h3>
+                    <button class="white-button">Apply here</button>
+                </div>
+                <div style="width:600px; padding:15px;">
+                    <div class="container-space-between" style="width: 420px">
+                        <p>location</p>
+                        <p>salary</p>
+                        <p>hours</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
+        <div class="white-container container-flex">
+            <div class="compatibility-bar">
+                <div class="percent">
+                    <p style="font-size: 24pt; margin: 0;">75%</p>
+                    <p>compatible</p>
+                </div>
+            </div>
+            <div>
+                <div class="container-space-between" style="align-items: baseline;">
+                    <h3 style="margin-left:15px;">Job title</h3>
+                    <button class="white-button">Apply here</button>
+                </div>
+                <div style="width:600px; padding:15px;">
+                    <div class="container-space-between" style="width: 420px">
+                        <p>location</p>
+                        <p>salary</p>
+                        <p>hours</p>
+                    </div>
+                </div>
+            </div>
 
+        </div>
     </div>
-</div>
 
-<div class="centre-content container-centre">
+    <div class="centre-content container-centre">
 
-    @if (userID == null)
-    {
-        <span style=" margin-top:20px">
-            <a href="Login" class="margin-t-50 auth-a" style="font-weight:bold;">Log in </a>
-            to save your results or 
-            <a href="Register" class="margin-t-50 auth-a" style="font-weight:bold;">Register</a>
-            if you dont yet have an account.
+        @if (userID == null)
+        {
+            <span style=" margin-top:20px">
+                <a href="Login" class="margin-t-50 auth-a" style="font-weight:bold;">Log in </a>
+                to save your results or 
+                <a href="Register" class="margin-t-50 auth-a" style="font-weight:bold;">Register</a>
+                if you dont yet have an account.
 
+            </span>
+        }
+    </div>
+}
+else if (quizComplete == "False")
+{
+    <div class="centre-content container-centre">
+        <span style="margin-top:20px">
+            You have not yet completed the quiz. You can do so
+        <a href="" class="margin-t-50 auth-a" style="font-weight:bold;">here</a>.
         </span>
+    </div>
+
+    @for (int x = 0; x < 3; x++)
+    {
+        <div class="centre-content container-centre">
+            <span style="margin-top:20px">
+                <div class="white-container container-flex">
+                    <div class="compatibility-bar-empty">
+                        <div class="percent">
+                            <p style="font-size: 24pt; margin: 0;">%</p>
+                            <p>compatible</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="container-space-between" style="align-items: baseline;">
+                            <div class="skeleton-text skeleton-text-short-tall" style="margin-left: 15px"></div>
+                        </div>
+                        <div style="width:600px; padding:15px;">
+                            <div class="container-space-between" style="width: 420px;">
+                                <div class="skeleton-text skeleton-text-short"></div>
+                                <div class="skeleton-text skeleton-text-short"></div>
+                                <div class="skeleton-text skeleton-text-short"></div>
+                            </div>
+                            <div class="skeleton-text skeleton-text-long" style="margin-top: 5px;"></div>
+                            <div class="skeleton-text skeleton-text-long"></div>
+                            <div class="skeleton-text skeleton-text-long"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </span>
+        </div>
     }
-</div>
+}
 
 
 @code {
@@ -127,5 +170,6 @@
     }
 
     [Parameter] public string userID { get; set; }
+    [Parameter] public string quizComplete { get; set; }
 }
 

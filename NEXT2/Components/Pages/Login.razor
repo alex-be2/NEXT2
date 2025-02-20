@@ -43,6 +43,8 @@
     private List<User> users;
     int alert = 0;
     bool emptyTable = false;
+    //change "quizComplete" to see different results pages
+    public bool quizComplete = false;
 
     protected override void OnInitialized()
     {
@@ -85,7 +87,7 @@
                     {
                         if (user.Email == email && user.Password == password)
                         {
-                            Navigation.NavigateTo($"/Results/{user.userID}");
+                            Navigation.NavigateTo($"/Results/{user.userID}/{quizComplete}");
 
                             return;
                         }

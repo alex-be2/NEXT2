@@ -64,6 +64,7 @@
     private bool passwordMatch = false;
     int alert = 0;
     bool emptyTable = false;
+    bool quizComplete = false;
 
     private List<User> users;
 
@@ -119,8 +120,11 @@
 
                 newUser.Email = email;
                 newUser.Password = password;
+
                 AddUser(newUser);
-                Navigation.NavigateTo($"/Results/{newUser.userID}");
+                Navigation.NavigateTo($"/Results/{newUser.userID}/{quizComplete}");            
+
+
             }
         }
         else
@@ -140,5 +144,4 @@
         DbContext.Users.Add(newuser);
         await DbContext.SaveChangesAsync();
     }
-
 }
