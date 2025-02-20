@@ -13,32 +13,58 @@
     @*questions container*@
     <div class="white-container">
         <h2>Section @getSecNum()</h2>
-        <hr />
+        <hr/>
+        
+        
         @foreach (Question currentQuestion in curr_questions)
         {
-            string rName = currentQuestion.QuestionID.ToString();
-            <div style="padding: 30px;">
-                <p class="text-l">@currentQuestion.QuestionText</p>
-                <div class="container-space-between">
-                    @foreach (Answer answer in getAnswers(currentQuestion.QuestionID))
-                    {
-                        @if (getChecked(answer.AnswerID))
-                        {
-                            <label class="container">
-                                <input type="radio" checked name="@rName" @onclick="() => selectAnswer(answer)">
-                                <span class="selection">@answer.AnswerText</span>
-                            </label>
-                        }
-                        else
-                        {
-                            <label class="container">
-                                <input type="radio" name="@rName" @onclick="() => selectAnswer(answer)">
-                                <span class="selection">@answer.AnswerText</span>
-                            </label>
-                        }
-                    }
+            @if (getAnswers(currentQuestion.QuestionID).Count() >= 10)
+            {
+                <div style="padding: 30px;">
+                    <p class="text-l">How much experience do you have working in a team?</p>
+                    <div class="slider-container">
+                        <div class="container-space-between">
+                            <p style="width: 10%"> 1</p>
+                            <p style="width: 10%"> 2</p>
+                            <p style="width: 10%"> 3</p>
+                            <p style="width: 10%"> 4</p>
+                            <p style="width: 10%"> 5</p>
+                            <p style="width: 10%"> 6</p>
+                            <p style="width: 10%"> 7</p>
+                            <p style="width: 10%"> 8</p>
+                            <p style="width: 10%"> 9</p>
+                            <p style="width: 10%">10</p>
+                        </div>
+                        <input type="range" min="1" max="10" class="slider" @bind-value="@sliderAnswer" />
+                    </div>
                 </div>
-            </div>
+            }
+            else
+            {
+                string rName = currentQuestion.QuestionID.ToString();
+                <div style="padding: 30px;">
+                    <p class="text-l">@currentQuestion.QuestionText</p>
+                    <div class="container-space-between">
+                        @foreach (Answer answer in getAnswers(currentQuestion.QuestionID))
+                        {
+                            @if (getChecked(answer.AnswerID))
+                            {
+                                <label class="container">
+                                    <input type="radio" checked name="@rName" @onclick="() => selectAnswer(answer)">
+                                    <span class="selection">@answer.AnswerText</span>
+                                </label>
+                            }
+                            else
+                            {
+                                <label class="container">
+                                    <input type="radio" name="@rName" @onclick="() => selectAnswer(answer)">
+                                    <span class="selection">@answer.AnswerText</span>
+                                </label>
+                            }
+                        }
+                    </div>
+                </div>
+            }
             <hr />
         }
 
@@ -64,6 +90,8 @@
     private List<UserAnswer> all_user_answers = new List<UserAnswer> { };
     private Answer[] user_answers = new Answer[3];
     Node current_node = new Node();
+
+    private int sliderAnswer = 1;
 
     private bool missingAnswers = false;
     private bool savedAnswers = false;
@@ -108,6 +136,8 @@
             }
         }
 
+        string[] nums = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
+
         foreach (UserAnswer a in all_user_answers)
         {
             if (a.NodeID == current_node_id && a.SessionID == current_session_id)
@@ -117,20 +147,32 @@
                 if (a.QuestionID == curr_questions[0].QuestionID)
                 {
                     user_answers[0] = GetAnswer(a.AnswerID, all_answers);
+                    if (nums.Contains(user_answers[0].AnswerText))
+                    {
+                        sliderAnswer = Convert.ToInt32(user_answers[0].AnswerText);
+                    }
                 }
                 else if (a.QuestionID == curr_questions[1].QuestionID)
                 {
                     user_answers[1] = GetAnswer(a.AnswerID, all_answers);
+                    if (nums.Contains(user_answers[1].AnswerText))
+                    {
+                        sliderAnswer = Convert.ToInt32(user_answers[1].AnswerText);
+                    }
                 }
                 else if (a.QuestionID == curr_questions[2].QuestionID)
                 {
                     user_answers[2] = GetAnswer(a.AnswerID, all_answers);
+                    if (nums.Contains(user_answers[2].AnswerText))
+                    {
+                        sliderAnswer = Convert.ToInt32(user_answers[2].AnswerText);
+                    }
                 }
             }
         }
     }
 
-    protected bool getChecked(int id)
+    protected bool getChecked(int id) // returns a bool which determines whether the user has already answered the questions
     {
         if (savedAnswers)
         {
@@ -146,7 +188,7 @@
         return false;
     }
 
-    protected UserAnswer getUserAnswer (int id)
+    protected UserAnswer getUserAnswer (int id) //selects the correct userAnswer object with the desired id
     {
         foreach (UserAnswer answer in all_user_answers)
         {
@@ -158,7 +200,7 @@
         return new UserAnswer();
     }
 
-    protected Answer GetAnswer(int id, List<Answer> answer_list)
+    protected Answer GetAnswer(int id, List<Answer> answer_list) //returns the answer object from the lsit of objects with the selected id
     {
         foreach (Answer answer in answer_list)
         {
@@ -170,7 +212,7 @@
         return new Answer();
     }
 
-    protected List<Answer> getAnswers(int q_id)
+    protected List<Answer> getAnswers(int q_id) // returns answers for the current question
     {
         List<Answer> answers = new List<Answer> { };
 
@@ -213,6 +255,18 @@
 
     protected void NextNode()
     {
+        if (curr_answers.Count() > 6)
+        {
+            foreach (Answer a in curr_answers)
+            {
+                if (a.AnswerText == sliderAnswer.ToString())
+                {
+                    selectAnswer(a);
+                }
+
+            }
+        }
+
         int path1 = 0;
         int path2 = 0;
 
@@ -346,23 +400,3 @@
 }
 
 
-@*<hr />
-    <div style="padding: 30px;">
-        <h4 class="text-l">Question 2</h4>
-        <p class="text-l">How much experience do you have working in a team?</p>
-        <div class="slider-container">
-            <div class="container-space-between">
-                <p style="width: 10%"> 1</p>
-                <p style="width: 10%"> 2</p>
-                <p style="width: 10%"> 3</p>
-                <p style="width: 10%"> 4</p>
-                <p style="width: 10%"> 5</p>
-                <p style="width: 10%"> 6</p>
-                <p style="width: 10%"> 7</p>
-                <p style="width: 10%"> 8</p>
-                <p style="width: 10%"> 9</p>
-                <p style="width: 10%">10</p>
-            </div>
-            <input type="range" min="1" max="10" class="slider"/>
-        </div>
-    </div> *@
