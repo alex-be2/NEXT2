@@ -15,20 +15,12 @@
         <a href="Login" class="margin-t-50 auth-a" style="font-weight:bold;">Log in</a>
          to view your results
     </span>
-    <a href="Results" class="auth-a margin-t-50" style="font-weight:bold;">results page</a>
+    <a href="FetchUsers" class="auth-a margin-t-50" style="font-weight:bold;">dbtest</a>
 </div>
 
 
 
 @code {
-
-    // protected override async Task OnAfterRenderAsync(bool firstRender)
-    // {
-    //     if (firstRender)
-    //     {
-    //         StateHasChanged();
-    //     }
-    // }
     private void StartQuiz()
     {
         List<UserAnswer> all_user_answers = DbContext.UserAnswersNew.ToList();

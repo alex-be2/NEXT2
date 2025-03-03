@@ -1,19 +1,25 @@
 ﻿@page "/FetchUsers"
 @using NEXT2.Data
 @inject ApplicationDbContext DbContext 
+@rendermode InteractiveServer
 
-<h3>answer table</h3>
+<div class="container-space-between">
+    <h3>User answer table</h3>
+    <button @onclick="DeleteUserAnswers">clear</button>
+</div>
 
-@if (answers == null)
+
+@if (Useranswers == null)
 {
     <p>empty</p>
 }
 else
 {
     <ul>
-        @foreach (var answer in answers)
+        @foreach (var answer in Useranswers)
         {
-            <li>@answer.AnswerID</li>
+            <li class="container-space-between"><p>Session id: </p>@answer.SessionID<p>Question id: </p>@answer.QuestionID<p>Answer id: </p> @answer.AnswerID <button @onclick="() => updateUserAnswer(answer.UserAnswerID)">update</button></li>
+            
         }
     </ul>
     
@@ -21,11 +27,27 @@ else
 
 
 @code {
-    private List<Answer> answers;
+    private List<UserAnswer> Useranswers;
 
     protected override async Task OnInitializedAsync()
     {
-        answers = DbContext.AnswersNew.ToList();
+        Useranswers = DbContext.UserAnswersNew.ToList();
+    }
+
+    public async Task updateUserAnswer(int UserAnswerId)
+    {
+        UserAnswer current = await DbContext.UserAnswersNew.FindAsync(UserAnswerId);
+        current.AnswerID = 100000;
+        DbContext.UserAnswersNew.Update(current);
+        await DbContext.SaveChangesAsync();
+        StateHasChanged();
+    }
+
+    public async Task DeleteUserAnswers()
+    {
+        DbContext.UserAnswersNew.RemoveRange(Useranswers);
+        await DbContext.SaveChangesAsync();
+        StateHasChanged();
     }
 }
 
