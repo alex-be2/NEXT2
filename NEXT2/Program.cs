@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NEXT2.Components;
+using NEXT2.Components.Services;
 using NEXT2.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,8 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<UserAnwserService>();
 
 var app = builder.Build();
 
