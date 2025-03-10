@@ -121,6 +121,6 @@
 }
 
 .flex-container {
-    display: block;
+    display: flex;
     flex-wrap: nowrap;
 }
