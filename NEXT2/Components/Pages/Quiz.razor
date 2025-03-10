@@ -117,7 +117,7 @@
 
                 foreach (Question q in all_questions)
                 {
-                    if (q.QuestionID == n.Question1ID || q.QuestionID == n.Question2ID || q.QuestionID == n.Question3ID)
+                    if (q.NodeId == n.NodeID)
                     {
                         curr_questions.Add(q);
                     }

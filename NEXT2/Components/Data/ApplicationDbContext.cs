@@ -14,9 +14,10 @@ namespace NEXT2.Data
         public DbSet<Node> NodesNew { get; set; }
         public DbSet<UserAnswer> UserAnswersNew { get; set; }
         public DbSet<Departments> Departments { get; set; }
+        public DbSet<RoleAnswer> RoleAnswers {  get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<RoleScore> RolesScore { get; set; }
     }
-
-
 }
 //public class Question
 //{
@@ -31,6 +32,7 @@ public class Question
 {
     public int QuestionID { get; set; }
     public string QuestionText { get; set; }
+    public int NodeId { get; set; }
 }
 
 public class Answer
@@ -54,9 +56,6 @@ public class User
 public class Node 
 { 
     public int NodeID { get; set; }
-    public int Question1ID { get; set; }
-    public int Question2ID { get; set; }
-    public int Question3ID { get; set; }
     public int? Path1 { get; set; }
     public int? Path2 { get; set; }
     public int? ParentNodeId { get; set; }
@@ -79,4 +78,19 @@ public class Departments
     public string DepartmentName { get; set; }
     public string? DepartmentDesc { get; set; }
     public string? Img { get; set; }
+}
+
+public class Role
+{
+    public int RoleID { get; set; }
+}
+
+public class RoleAnswer
+{
+    public int RoleAnswerID { get; set; }
+}
+
+public class RoleScore
+{
+    public int RoleScoreID { get; set; }
 }
