@@ -1,7 +1,9 @@
-﻿@page "/Quiz/{current_node_id:int}/{current_session_id:int}"
+﻿@using NEXT2.Components.Services
+@page "/Quiz/{current_node_id:int}/{current_session_id:int}"
 @using NEXT2.Data
 @inject ApplicationDbContext DbContext
 @inject NavigationManager Navigation
+@inject UserAnwserService UserAnwserService
 @rendermode InteractiveServer
 @layout MainLayout
 
@@ -103,7 +105,6 @@
     protected override async Task OnInitializedAsync()
     {
         getCurrs();
-
     }
     protected void getCurrs()
     {
@@ -120,7 +121,7 @@
 
                 foreach (Question q in all_questions)
                 {
-                    if (q.QuestionID == n.Question1ID || q.QuestionID == n.Question2ID || q.QuestionID == n.Question3ID)
+                    if (q.NodeId == n.NodeID)
                     {
                         curr_questions.Add(q);
                     }
@@ -345,16 +346,8 @@
         }
         else
         {
-            foreach (Answer a in user_answers)
-            {
-                UserAnswer x = new UserAnswer();
-                x.SessionID = current_session_id;
-                x.NodeID = current_node_id;
-                x.QuestionID = a.QuestionID;
-                x.AnswerID = a.AnswerID;
 
-                AddUserAnswers();
-            }
+            AddUserAnswers();
         }
 
     }
