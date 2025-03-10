@@ -7,21 +7,25 @@
 
 <div class="centre-content container-centre margin-t-50">
     @*progress bar*@
-        <div style="background-color: black; border-radius: 5px; height: 40px; border: 3px solid black; width: @getCompletion()%">
+    <div style="text-align:center">
+        <p>@getCompletion()% complete</p>
+    <div class="container-flex">
+        <div class="progress-percent" style="background-color: #00829b; border-top-left-radius: 5px; border-bottom-left-radius: 5px; height: 40px; border: 3px solid #00829b; width: @getCompletion()%"></div>
+        <div style="background-color: white; border-top-right-radius: 5px; border-bottom-right-radius:5px; height: 40px; border: 3px solid white; width: @percentLeft()%"> </div>
     </div>
-    <p>@getCompletion()% complete</p>
+    </div>
     @*questions container*@
     <div class="white-container">
         <h2>Section @getSecNum()</h2>
         <hr/>
-        
-        
+
+
         @foreach (Question currentQuestion in curr_questions)
         {
             @if (getAnswers(currentQuestion.QuestionID).Count() >= 10)
             {
                 <div style="padding: 30px;">
-                    <p class="text-l">How much experience do you have working in a team?</p>
+                    <p class="text-l">@currentQuestion.QuestionText</p>
                     <div class="slider-container">
                         <div class="container-space-between">
                             <p style="width: 10%"> 1</p>
@@ -249,7 +253,12 @@
 
     protected string getCompletion()
     {
-        return (Math.Round((float.Parse(getSecNum())-1) / 3 * 100,1)).ToString();
+        return (Math.Round((float.Parse(getSecNum()) - 1) / 3 * 100, 0)).ToString();
+    }
+
+    protected string percentLeft()
+    {
+        return (100-(Math.Round((float.Parse(getSecNum()) - 1) / 3 * 100, 0))).ToString();
     }
 
     protected void NextNode()
