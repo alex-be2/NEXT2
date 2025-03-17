@@ -26,16 +26,10 @@
                     <p class="text-l">How much experience do you have working in a team?</p>
                     <div class="slider-container">
                         <div class="container-space-between">
-                            <p style="width: 10%"> 1</p>
-                            <p style="width: 10%"> 2</p>
-                            <p style="width: 10%"> 3</p>
-                            <p style="width: 10%"> 4</p>
-                            <p style="width: 10%"> 5</p>
-                            <p style="width: 10%"> 6</p>
-                            <p style="width: 10%"> 7</p>
-                            <p style="width: 10%"> 8</p>
-                            <p style="width: 10%"> 9</p>
-                            <p style="width: 10%">10</p>
+                            @foreach (string num in @nums)
+                            {
+                                <p style="width:10%"> @num</p>
+                            }
                         </div>
                         <input type="range" min="1" max="10" class="slider" @bind-value="@sliderAnswer" />
                     </div>
@@ -95,6 +89,8 @@
 
     private int sliderAnswer = 1;
 
+    string[] nums = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
+
     private bool missingAnswers = false;
     private bool savedAnswers = false;
 
@@ -137,36 +133,21 @@
             }
         }
 
-        string[] nums = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
-
         foreach (UserAnswer a in all_user_answers)
         {
             if (a.NodeID == current_node_id && a.SessionID == current_session_id)
             {
                 savedAnswers = true;
 
-                if (a.QuestionID == curr_questions[0].QuestionID)
+                for (int i = 0; i < curr_questions.Count(); i++)
                 {
-                    user_answers[0] = GetAnswer(a.AnswerID, all_answers);
-                    if (nums.Contains(user_answers[0].AnswerText))
+                    if (a.QuestionID == curr_questions[i].QuestionID)
                     {
-                        sliderAnswer = Convert.ToInt32(user_answers[0].AnswerText);
-                    }
-                }
-                else if (a.QuestionID == curr_questions[1].QuestionID)
-                {
-                    user_answers[1] = GetAnswer(a.AnswerID, all_answers);
-                    if (nums.Contains(user_answers[1].AnswerText))
-                    {
-                        sliderAnswer = Convert.ToInt32(user_answers[1].AnswerText);
-                    }
-                }
-                else if (a.QuestionID == curr_questions[2].QuestionID)
-                {
-                    user_answers[2] = GetAnswer(a.AnswerID, all_answers);
-                    if (nums.Contains(user_answers[2].AnswerText))
-                    {
-                        sliderAnswer = Convert.ToInt32(user_answers[2].AnswerText);
+                        user_answers[i] = GetAnswer(a.AnswerID, all_answers);
+                        if (nums.Contains(user_answers[i].AnswerText))
+                        {
+                            sliderAnswer = Convert.ToInt32(user_answers[i].AnswerText);
+                        }
                     }
                 }
             }
@@ -263,7 +244,6 @@
                 {
                     selectAnswer(a);
                 }
-
             }
         }
 

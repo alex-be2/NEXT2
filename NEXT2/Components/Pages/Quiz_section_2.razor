@@ -1,0 +1,205 @@
+﻿@using NEXT2.Components.Services
+@page "/Quiz_section_2/{current_node_id:int}/{current_session_id:int}"
+@using NEXT2.Data
+@inject ApplicationDbContext DbContext
+@inject NavigationManager Navigation
+@inject UserAnwserService UserAnwserService
+@rendermode InteractiveServer
+@layout MainLayout
+
+<div class="centre-content container-centre margin-t-50">
+    @*progress bar*@
+        <div style="background-color: black; border-radius: 5px; height: 40px; border: 3px solid black; width: @getCompletion()%">
+    </div>
+    <p>@getCompletion()% complete</p>
+    @*questions container*@
+    <div class="white-container">
+        <h2>Section @getSecNum()</h2>
+        <hr/>
+        
+        
+        @foreach (Question currentQuestion in curr_questions)
+        {
+            @if (getAnswers(currentQuestion.QuestionID).Count() >= 10)
+            {
+                <div style="padding: 30px;">
+                    <p class="text-l">How much experience do you have working in a team?</p>
+                    <div class="slider-container">
+                        <div class="container-space-between">
+                            <p style="width: 10%"> 1</p>
+                            <p style="width: 10%"> 2</p>
+                            <p style="width: 10%"> 3</p>
+                            <p style="width: 10%"> 4</p>
+                            <p style="width: 10%"> 5</p>
+                            <p style="width: 10%"> 6</p>
+                            <p style="width: 10%"> 7</p>
+                            <p style="width: 10%"> 8</p>
+                            <p style="width: 10%"> 9</p>
+                            <p style="width: 10%">10</p>
+                        </div>
+                        <input type="range" min="1" max="10" class="slider" @bind-value="@sliderAnswer" />
+                    </div>
+                </div>
+            }
+            else
+            {
+                string rName = currentQuestion.QuestionID.ToString();
+                <div style="padding: 30px;">
+                    <p class="text-l">@currentQuestion.QuestionText</p>
+                    <div class="container-space-between">
+                        @foreach (Answer answer in getAnswers(currentQuestion.QuestionID))
+                        {
+                            <label class="container">
+                                <input type="radio" name="@rName" @onclick="() => UpdateScores(answer)">
+                                <span class="selection">@answer.AnswerText</span>
+                            </label>
+                        }
+                    </div>
+                </div>
+            }
+            <hr />
+        }
+
+        @if (missingAnswers)
+        {
+            <p style="color:red">Please answer all the questions before continuing</p>
+        }
+
+        <div class="container-space-between height-100">
+            <button class="white-button margin-t-50" @onclick="PrevNode"><i class="fa-solid fa-caret-left"></i> Back</button>
+            <button class="white-button margin-t-50" @onclick="CompleteQuiz">Submit <i class="fa-solid fa-caret-right"></i></button>
+        </div>
+    </div>
+    <br />
+</div>
+
+@code {
+    [Parameter] public int current_node_id { get; set; }
+    [Parameter] public int current_session_id { get; set; }
+
+    private List<Question> curr_questions = new List<Question> { };
+    private List<Answer> curr_answers = new List<Answer> { };
+    private List<UserAnswer> all_user_answers = new List<UserAnswer> { };
+    private Answer[] user_answers = new Answer[3];
+    Node current_node = new Node();
+
+    private int sliderAnswer = 1;
+
+    private bool missingAnswers = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        getCurrs();
+    }
+    protected void getCurrs()
+    {
+        List<Question> all_questions = DbContext.QuestionsNew.ToList();
+        List<Answer> all_answers = DbContext.AnswersNew.ToList();
+        List<Node> all_nodes = DbContext.NodesNew.ToList();
+        all_user_answers = DbContext.UserAnswersNew.ToList();
+
+        foreach (Node n in all_nodes)
+        {
+            if (n.NodeID == current_node_id)
+            {
+                current_node = n;
+
+                foreach (Question q in all_questions)
+                {
+                    if (q.NodeId == n.NodeID)
+                    {
+                        curr_questions.Add(q);
+                    }
+                }
+                break;
+            }
+        }
+
+        foreach (Question q in curr_questions)
+        {
+            foreach (Answer a in all_answers)
+            {
+                if (a.QuestionID == q.QuestionID)
+                {
+                    curr_answers.Add(a);
+                }
+            }
+        }
+    }
+
+    protected void UpdateScores(Answer answer)
+    {
+        
+    }
+
+    protected Answer GetAnswer(int id, List<Answer> answer_list) //returns the answer object from the lsit of objects with the selected id
+    {
+        foreach (Answer answer in answer_list)
+        {
+            if (answer.AnswerID == id)
+            {
+                return answer;
+            }
+        }
+        return new Answer();
+    }
+
+    protected List<Answer> getAnswers(int q_id) // returns answers for the current question
+    {
+        List<Answer> answers = new List<Answer> { };
+
+        foreach (Answer a in curr_answers)
+        {
+            if (a.QuestionID == q_id) { answers.Add(a); }
+        }
+
+        return answers;
+    }
+
+    protected string getSecNum()
+    {
+        switch (current_node_id)
+        {
+            case 1: return "1";
+            case 2: return "2";
+            case 3: return "2";
+            case 4: return "3";
+            case 5: return "3";
+            case 6: return "3";
+            case 7: return "3";
+            case 8: return "4";
+            case 9: return "4";
+            case 10: return "4";
+            case 11: return "4";
+            case 12: return "4";
+            case 13: return "4";
+            case 14: return "4";
+            case 15: return "4";
+            default: return "";
+        }
+    }
+
+    protected string getCompletion()
+    {
+        return (Math.Round((float.Parse(getSecNum()) - 1) / 3 * 100, 1)).ToString();
+    }
+
+
+    protected void PrevNode()
+    {
+        if (current_node.ParentNodeId == 0)
+        {
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            Navigation.NavigateTo($"/Quiz_section_2/{current_node.ParentNodeId}/{current_session_id}");
+        }
+    }
+
+    protected void CompleteQuiz()
+    {
+        Navigation.NavigateTo($"/Results");
+    }
+}
+
