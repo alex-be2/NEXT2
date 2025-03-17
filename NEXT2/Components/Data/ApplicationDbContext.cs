@@ -78,6 +78,8 @@ public class Departments
     public string DepartmentName { get; set; }
     public string? DepartmentDesc { get; set; }
     public string? Img { get; set; }
+
+    public int NodeID { get; set; }
 }
 
 public class Role

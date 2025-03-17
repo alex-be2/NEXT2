@@ -14,9 +14,10 @@
     <p>@getCompletion()% complete</p>
     @*questions container*@
     <div class="white-container">
+        <img style="width: 100%; height: 200px;" src="@image_link"/>
+        <h2>akuhfoaiaug</h2>
         <h2>Section @getSecNum()</h2>
         <hr/>
-        
         
         @foreach (Question currentQuestion in curr_questions)
         {
@@ -82,6 +83,9 @@
     private List<UserAnswer> all_user_answers = new List<UserAnswer> { };
     private Answer[] user_answers = new Answer[3];
     Node current_node = new Node();
+    string image_link = "";
+
+    private Dictionary<int, int> Scores = new Dictionary<int, int>();
 
     private int sliderAnswer = 1;
 
@@ -96,6 +100,8 @@
         List<Question> all_questions = DbContext.QuestionsNew.ToList();
         List<Answer> all_answers = DbContext.AnswersNew.ToList();
         List<Node> all_nodes = DbContext.NodesNew.ToList();
+        List<Role> all_role = DbContext.Roles.ToList();
+        List<Departments> all_departments = DbContext.Departments.ToList();
         all_user_answers = DbContext.UserAnswersNew.ToList();
 
         foreach (Node n in all_nodes)
@@ -125,11 +131,33 @@
                 }
             }
         }
+
+        // foreach (Role role in all_role)
+        // {
+        //     if (role.NodeId == current_node_id)
+        //     {
+        //         Scores.Add(role.RoleID, 0);
+        //     }
+        // }
+
+        foreach (Departments department in all_departments)
+        {
+            if (department.NodeID == current_node_id)
+            {
+                 image_link = department.Img;
+            }
+        }
     }
 
     protected void UpdateScores(Answer answer)
     {
-        
+        // foreach (KeyValuePair<int,int> kvp in Scores) 
+        // {
+        //     if (kvp.Key == answer.RoleID)
+        //     {
+        //         Scores[kvp.Key] += answer.RoleScore;
+        //     }
+        // }
     }
 
     protected Answer GetAnswer(int id, List<Answer> answer_list) //returns the answer object from the lsit of objects with the selected id
@@ -199,6 +227,23 @@
 
     protected void CompleteQuiz()
     {
+        Scores.OrderDescending();
+        Dictionary<int,int> TopScores = new Dictionary<int, int>();
+
+        foreach (KeyValuePair<int, int> kvp in Scores)
+        {
+            if (TopScores.Count() == 3)
+            {
+                break;
+            }
+            else
+            {
+                TopScores.Add(kvp.Key,kvp.Value);
+            }
+        }
+
+        //save results to db
+
         Navigation.NavigateTo($"/Results");
     }
 }
