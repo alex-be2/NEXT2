@@ -105,3 +105,22 @@
     border-radius: 50%;
     background: white;
 }
+
+.bg-progress {
+    background-color: #00829b;
+    border-radius: 5px;
+    height: 40px;
+    border: 3px solid #00829b;
+    width: 100%;
+    margin-bottom:100px;
+    position:relative;
+}
+
+.progress-percent{
+    position:absolute;
+}
+
+.flex-container {
+    display: flex;
+    flex-wrap: nowrap;
+}
