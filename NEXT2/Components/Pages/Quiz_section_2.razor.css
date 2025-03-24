@@ -59,6 +59,17 @@
     user-select: none;
     max-width: 100%;
 }
+.background-container{
+    z-index: -1;
+    position: absolute;
+    top: 150px;
+    left: 0px;
+    object-fit:cover;
+}
+.image-container{
+    height: 80px;
+    overflow:hidden;
+}
 
     .container input {
         position: absolute;
@@ -67,6 +78,38 @@
         height: 0;
         width: 0;
     }
+
+.centered-text {
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.top-left-text {
+    position: absolute;
+    top: 200px;
+    left: 250px;
+    transform: translate(-50%, -50%);
+    float: left;
+}
+
+.sticky-container{
+    /*height: 100vh;*/
+    top:0;
+}
+.sticky-element{
+    position: sticky;
+    z-index: 10;
+    top: 0;
+    overflow:scroll;
+}
+
+
+footer {
+/*    position: sticky;
+*/    bottom: 0;
+    width: 100%;
+}
 
 .selection {
     width: 100%;

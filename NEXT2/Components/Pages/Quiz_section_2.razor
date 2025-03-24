@@ -7,16 +7,28 @@
 @rendermode InteractiveServer
 @layout MainLayout
 
+
 <div class="centre-content container-centre margin-t-50">
     @*progress bar*@
-        <div style="background-color: black; border-radius: 5px; height: 40px; border: 3px solid black; width: @getCompletion()%">
+    <div style="margin-top: 200px"></div>
+     
+    <div class="image-container">
+        <div class="top-left-text" style="color: white;">
+            <h1>@department_name</h1>
+        </div>
+        <img class="background-container" style="width: 100%; color:white;" src="@image_link"/>
     </div>
-    <p>@getCompletion()% complete</p>
     @*questions container*@
     <div class="white-container">
-        <img style="width: 10%; height: 200px; opacity: 50%;" src="@image_link"/>
-        <h2>Section @getSecNum()</h2>
-        <hr/>
+            <div style="background-color: black; border-radius: 5px; height: 40px; border: 3px solid black; margin-bottom: 30px; width: @getCompletion()%">
+                <p style="color: white; top:4px;">@getCompletion()% complete</p>
+            </div>
+@*         <div>
+            <div class="centered-text">
+            </div>
+        </div>
+        <hr/> *@
+        <b><h1>Section @getSecNum()</h1></b>
         
         @foreach (Question currentQuestion in curr_questions)
         {
@@ -73,6 +85,9 @@
     <br />
 </div>
 
+
+
+
 @code {
     [Parameter] public int current_node_id { get; set; }
     [Parameter] public int current_session_id { get; set; }
@@ -83,6 +98,7 @@
     private Answer[] user_answers = new Answer[3];
     Node current_node = new Node();
     string image_link = "";
+    string department_name = "";
 
     private Dictionary<int, int> Scores = new Dictionary<int, int>();
 
@@ -143,7 +159,8 @@
         {
             if (department.NodeID == current_node_id)
             {
-                 image_link = department.Img;
+                image_link = department.Img;
+                department_name = department.DepartmentName;
             }
         }
     }
@@ -205,6 +222,23 @@
             default: return "";
         }
     }
+
+    // protected string getDepartment(int currentNodeID, List<Departments> allDepartments)
+    // {
+    //     foreach (Departments d in allDepartments)
+    //     {
+    //         if(currentNodeID == d.NodeID)
+    //         {
+    //             //string departmentName = d.DepartmentName;
+    //             return d.DepartmentName;
+    //         }
+    //         else
+    //         {
+    //             return null;
+    //         }
+    //     }
+    //     return null;
+    // }
 
     protected string getCompletion()
     {
