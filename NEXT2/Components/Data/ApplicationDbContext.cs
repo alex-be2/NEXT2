@@ -41,8 +41,8 @@ public class Answer
     public int QuestionID { get; set; }
     public string AnswerText { get; set; }
     public int? Path { get; set; }
-    public int RoleID { get; set; }
-    public int RoleScore { get; set; }
+    public int? RoleID { get; set; }
+    public int? RoleScore { get; set; }
 
 }
 
