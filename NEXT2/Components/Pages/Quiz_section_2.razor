@@ -147,13 +147,13 @@
             }
         }
 
-        // foreach (Role role in all_role)
-        // {
-        //     if (role.NodeId == current_node_id)
-        //     {
-        //         Scores.Add(role.RoleID, 0);
-        //     }
-        // }
+        foreach (Role role in all_role)
+        {
+            if (role.FinalNodeID == current_node_id)
+            {
+                Scores.Add(role.RoleID, 0);
+            }
+        }
 
         foreach (Departments department in all_departments)
         {
@@ -167,13 +167,13 @@
 
     protected void UpdateScores(Answer answer)
     {
-        // foreach (KeyValuePair<int,int> kvp in Scores) 
-        // {
-        //     if (kvp.Key == answer.RoleID)
-        //     {
-        //         Scores[kvp.Key] += answer.RoleScore;
-        //     }
-        // }
+        foreach (KeyValuePair<int,int> kvp in Scores) 
+        {
+            if (kvp.Key == answer.RoleID)
+            {
+                Scores[kvp.Key] += answer.RoleScore;
+            }
+        }
     }
 
     protected Answer GetAnswer(int id, List<Answer> answer_list) //returns the answer object from the lsit of objects with the selected id
@@ -261,7 +261,7 @@
     protected void CompleteQuiz()
     {
         Scores.OrderDescending();
-        Dictionary<int,int> TopScores = new Dictionary<int, int>();
+        List<int> TopScores = new List<int>();
 
         foreach (KeyValuePair<int, int> kvp in Scores)
         {
@@ -271,13 +271,23 @@
             }
             else
             {
-                TopScores.Add(kvp.Key,kvp.Value);
+                TopScores.Add(kvp.Key);
+                TopScores.Add(kvp.Value);
             }
         }
 
         //save results to db
+        Result newResult = new Result();
+        newResult.SessionId = current_session_id;
+        
+        newResult.Role1ID = TopScores[0];
+        newResult.Role1Score = TopScores[1];
+        newResult.Role2ID = TopScores[2];
+        newResult.Role2Score = TopScores[3];
+        newResult.Role3ID = TopScores[4];
+        newResult.Role3Score = TopScores[5];
 
-        Navigation.NavigateTo($"/Results");
+        Navigation.NavigateTo($"/Results/{current_session_id}/{true}");
     }
 }
 
