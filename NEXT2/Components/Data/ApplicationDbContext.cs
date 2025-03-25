@@ -103,7 +103,7 @@ public class RoleAnswer
 public class Result
 {
     public int ResultID { get; set; }
-    public int SessionId { get; set; }
+    public int SessionID { get; set; }
     public int? UserID { get; set; }
     public int Role1ID { get; set; }
     public int Role1Score { get; set; }

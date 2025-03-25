@@ -1,4 +1,4 @@
-﻿@page "/Login/{quizComplete}/{current_session_id:int}"
+﻿@page "/Login/{quizComplete:bool}/{current_session_id:int}"
 @using NEXT2.Components.Layout
 @layout MainLayout
 @using NEXT2.Data
@@ -38,7 +38,7 @@
 
 
 @code {
-    [Parameter] public int? current_session_id { get; set; }
+    [Parameter] public int current_session_id { get; set; }
     [Parameter] public bool quizComplete { get; set; }
 
     public string email = "";
@@ -97,7 +97,7 @@
                                 DbContext.Results.Update(currentResult);
                                 DbContext.SaveChangesAsync();
                             }
-                            Navigation.NavigateTo($"/Results/{user.userID}/{quizComplete}");
+                            Navigation.NavigateTo($"/Results/{-1}/{quizComplete}/{user.userID}");
 
                             return;
                         }
@@ -125,13 +125,13 @@
 
     }
 
-    private Result getResult(int? sessionID)
+    private Result getResult(int sessionID)
     {
         List<Result> all_results = DbContext.Results.ToList();
 
         foreach (Result result in all_results)
         {
-            if (result.SessionId == sessionID)
+            if (result.SessionID == sessionID)
             {
                 return result;
             }
@@ -141,6 +141,6 @@
 
     private void Register()
     {
-        Navigation.NavigateTo($"/Register/{false}/{null}");
+        Navigation.NavigateTo($"/Register/{false}/{-1}");
     }
 }
