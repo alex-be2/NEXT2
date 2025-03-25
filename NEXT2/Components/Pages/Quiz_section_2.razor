@@ -1,7 +1,7 @@
 ﻿@using NEXT2.Components.Services
 @page "/Quiz_section_2/{current_node_id:int}/{current_session_id:int}/{user_id:int}"
 @using NEXT2.Data
-@inject ApplicationDbContext DbContext
+@inject ApplicationDbContext Db_Context
 @inject NavigationManager Navigation
 @inject UserAnwserService UserAnwserService
 @rendermode InteractiveServer
@@ -12,9 +12,7 @@
     <div style="margin-top: 200px"></div>
      
     <div class="image-container">
-        <div class="top-left-text" style="color: white;">
-            <h1>@department_name</h1>
-        </div>
+        <h1 class="top-left-text white-banner" style="color: black;">@department_name</h1>
         <img class="background-container" style="width: 100%; color:white;" src="@image_link"/>
     </div>
     <div class="white-container">
@@ -107,12 +105,12 @@
     }
     protected void getCurrs()
     {
-        List<Question> all_questions = DbContext.QuestionsNew.ToList();
-        List<Answer> all_answers = DbContext.AnswersNew.ToList();
-        List<Node> all_nodes = DbContext.NodesNew.ToList();
-        List<Role> all_role = DbContext.Roles.ToList();
-        List<Departments> all_departments = DbContext.Departments.ToList();
-        all_user_answers = DbContext.UserAnswersNew.ToList();
+        List<Question> all_questions = Db_Context.QuestionsNew.ToList();
+        List<Answer> all_answers = Db_Context.AnswersNew.ToList();
+        List<Node> all_nodes = Db_Context.NodesNew.ToList();
+        List<Role> all_role = Db_Context.Roles.ToList();
+        List<Departments> all_departments = Db_Context.Departments.ToList();
+        all_user_answers = Db_Context.UserAnswersNew.ToList();
 
         foreach (Node n in all_nodes)
         {
@@ -220,7 +218,7 @@
 
     protected string getCompletion()
     {
-        return (Math.Round((float.Parse(getSecNum()) - 1) / 3 * 100, 1)).ToString();
+        return (Math.Round((float.Parse(getSecNum()) - 1) / 4 * 100, 1)).ToString();
     }
 
 
@@ -272,8 +270,8 @@
 
     private async Task addResult(Result newResult)
     {
-        DbContext.Results.Add(newResult);
-        await DbContext.SaveChangesAsync();
+        Db_Context.Results.Add(newResult);
+        await Db_Context.SaveChangesAsync();
     }
 }
 
