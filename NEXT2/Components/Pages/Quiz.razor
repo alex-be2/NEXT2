@@ -1,5 +1,5 @@
 ﻿@using NEXT2.Components.Services
-@page "/Quiz/{current_node_id:int}/{current_session_id:int}"
+@page "/Quiz/{current_node_id:int}/{current_session_id:int}/{user_id:int}"
 @using NEXT2.Data
 @inject ApplicationDbContext DbContext
 @inject NavigationManager Navigation
@@ -84,6 +84,7 @@
 @code {
     [Parameter] public int current_node_id { get; set; }
     [Parameter] public int current_session_id { get; set; }
+    [Parameter] public int user_id { get; set; }
 
     private List<Question> curr_questions = new List<Question> { };
     private List<Answer> curr_answers = new List<Answer> { };
@@ -284,22 +285,22 @@
             {
                 if (current_node.Path1 < 8)
                 {
-                    Navigation.NavigateTo($"/Quiz/{current_node.Path1}/{current_session_id}");
+                    Navigation.NavigateTo($"/Quiz/{current_node.Path1}/{current_session_id}/{user_id}");
                 }
                 else
                 {
-                    Navigation.NavigateTo($"/Quiz_section_2/{current_node.Path1}/{current_session_id}");
+                    Navigation.NavigateTo($"/Quiz_section_2/{current_node.Path1}/{current_session_id}/{user_id}");
                 }
             }
             else
             {
                 if (current_node.Path1 < 8)
                 {
-                    Navigation.NavigateTo($"/Quiz/{current_node.Path2}/{current_session_id}");
+                    Navigation.NavigateTo($"/Quiz/{current_node.Path2}/{current_session_id}/{user_id}");
                 }
                 else
                 {
-                    Navigation.NavigateTo($"/Quiz_section_2/{current_node.Path1}/{current_session_id}");
+                    Navigation.NavigateTo($"/Quiz_section_2/{current_node.Path1}/{current_session_id}/{user_id}");
                 }
             }
 
@@ -376,7 +377,7 @@
         }
         else
         {
-            Navigation.NavigateTo($"/Quiz/{current_node.ParentNodeId}/{current_session_id}");
+            Navigation.NavigateTo($"/Quiz/{current_node.ParentNodeId}/{current_session_id}/{user_id}");
         }
     }
 

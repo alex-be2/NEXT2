@@ -12,7 +12,7 @@
     <button @onclick="StartQuiz" class="white-button margin-t-50 no-link"> Start Quiz</button>
     <span class="margin-t-50" style=" padding-top:1px">
         Already completed the NEXT Careers Quiz?
-        <a href="Login" class="margin-t-50 auth-a" style="font-weight:bold;">Log in</a>
+        <button @onclick="LogIn" class="margin-t-50 auth-a"> Log in</button>
          to view your results
     </span>
     <a href="FetchUsers" class="auth-a margin-t-50" style="font-weight:bold;">dbtest</a>
@@ -21,6 +21,7 @@
 
 
 @code {
+    private int? user_id = null; //null changed to -1 to represent no user having logged in
     private void StartQuiz()
     {
         List<UserAnswer> all_user_answers = DbContext.UserAnswersNew.ToList();
@@ -32,8 +33,11 @@
             next_session_id = all_user_answers.Last().SessionID + 1;
         }
 
-        Navigator.NavigateTo($"/Quiz/{1}/{next_session_id}");
+        Navigator.NavigateTo($"/Quiz/{1}/{next_session_id}/{user_id}");
     }
 
-    
+    private void LogIn()
+    {
+        Navigator.NavigateTo($"/Login/{false}/{null}");
+    }
 }
