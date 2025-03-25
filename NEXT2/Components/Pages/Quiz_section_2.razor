@@ -172,7 +172,7 @@
         {
             if (kvp.Key == answer.RoleID)
             {
-                Scores[kvp.Key] += answer.RoleScore;
+                Scores[kvp.Key] += Convert.ToInt32(answer.RoleScore);
             }
         }
     }
@@ -280,7 +280,7 @@
         //save results to db
         Result newResult = new Result();
         newResult.SessionId = current_session_id;
-        
+
         newResult.Role1ID = TopScores[0];
         newResult.Role1Score = TopScores[1];
         newResult.Role2ID = TopScores[2];
@@ -288,7 +288,16 @@
         newResult.Role3ID = TopScores[4];
         newResult.Role3Score = TopScores[5];
 
+
+        addResult(newResult);
+
         Navigation.NavigateTo($"/Results/{current_session_id}/{true}");
+    }
+
+    private async Task addResult(Result newResult)
+    {
+        DbContext.Results.Add(newResult);
+        await DbContext.SaveChangesAsync();
     }
 }
 
