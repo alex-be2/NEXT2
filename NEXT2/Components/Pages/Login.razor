@@ -1,4 +1,4 @@
-﻿@page "/Login"
+﻿@page "/Login/{quizComplete}/{current_session_id:int}"
 @using NEXT2.Components.Layout
 @layout MainLayout
 @using NEXT2.Data
@@ -24,7 +24,7 @@
     }
     <span class="margin-t-50" style=" padding-top:1px">
         Don't have an account?
-        <a href="Register" class="margin-t-50 auth-a" style="font-weight:bold;">Register</a>
+        <button @onclick="Register" class="margin-t-50 auth-a"> Register</button>
     </span>
     <div class="container-space-between height-100">
         <a href="" class="white-button margin-t-50 no-link">
@@ -38,13 +38,15 @@
 
 
 @code {
+    [Parameter] public int? current_session_id { get; set; }
+    [Parameter] public bool quizComplete { get; set; }
+
     public string email = "";
     public string password = "";
     private List<User> users;
     int alert = 0;
     bool emptyTable = false;
-    //change "quizComplete" to see different results pages
-    public bool quizComplete = false;
+
 
     protected override void OnInitialized()
     {
@@ -87,6 +89,14 @@
                     {
                         if (user.Email == email && user.Password == password)
                         {
+                            if (quizComplete)
+                            {
+                                //update results table
+                                Result currentResult = getResult(current_session_id);
+                                currentResult.UserID = user.userID;
+                                DbContext.Results.Update(currentResult);
+                                DbContext.SaveChangesAsync();
+                            }
                             Navigation.NavigateTo($"/Results/{user.userID}/{quizComplete}");
 
                             return;
@@ -100,11 +110,11 @@
 
 
                 }
-                    else if (email == "" || password == "")
-                    {
-                        alert = 2;
-                        StateHasChanged();
-                    }
+                else if (email == "" || password == "")
+                {
+                    alert = 2;
+                    StateHasChanged();
+                }
             }
         }
         catch
@@ -112,6 +122,25 @@
             alert = 1;
             StateHasChanged();
         }
-        
+
+    }
+
+    private Result getResult(int? sessionID)
+    {
+        List<Result> all_results = DbContext.Results.ToList();
+
+        foreach (Result result in all_results)
+        {
+            if (result.SessionId == sessionID)
+            {
+                return result;
+            }
+        }
+        return new Result();
+    }
+
+    private void Register()
+    {
+        Navigation.NavigateTo($"/Register/{false}/{null}");
     }
 }

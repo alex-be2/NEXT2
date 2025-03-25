@@ -1,4 +1,4 @@
-﻿@page "/Results/{sessionID:int}/{quizComplete}"
+﻿@page "/Results/{sessionID:int}/{quizComplete}/{user_id:int}"
 @using NEXT2.Components.Layout
 @using NEXT2.Components.Models
 @layout ResultsLayout
@@ -7,7 +7,7 @@
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
-@if (quizComplete == "True")
+@if (quizComplete)
 {
     <div class="centre-content container-centre margin-t-50">
         <h1 class="text-l">Results </h1>
@@ -44,24 +44,24 @@
 
     <div class="centre-content container-centre">
 
-        @if (userID == null)
+        @if (user_id == null)
         {
             <span style=" margin-top:20px">
-                <a href="Login" class="margin-t-50 auth-a" style="font-weight:bold;">Log in </a>
+                <button @onclick="LogIn" class="margin-t-50 auth-a"> Log in</button>
                 to save your results or 
-                <a href="Register" class="margin-t-50 auth-a" style="font-weight:bold;">Register</a>
+                <button @onclick="Register" class="margin-t-50 auth-a"> Register</button>
                 if you dont yet have an account.
 
             </span>
         }
     </div>
 }
-else if (quizComplete == "False")
+else if (!quizComplete)
 {
     <div class="centre-content container-centre">
         <span style="margin-top:20px">
             You have not yet completed the quiz. You can do so
-        <a href="" class="margin-t-50 auth-a" style="font-weight:bold;">here</a>.
+            <button @onclick="StartQuiz" class="margin-t-50 auth-a"> here</button>.
         </span>
     </div>
 
@@ -115,21 +115,38 @@ else if (quizComplete == "False")
         List<Result> all_Results = DbContext.Results.ToList();
         List<Role> all_Roles = DbContext.Roles.ToList();
 
-        foreach (User user in users)
+        Result result = new Result();
+
+        if (!quizComplete)
         {
-            if (userID == Convert.ToString(user.userID))
+            foreach (Result r in all_Results)
             {
-                email = user.Email;
-                break;
+                if (r.UserID == user_id)
+                {
+                    result = r;
+                    quizComplete = true;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            foreach (Result r in all_Results)
+            {
+                if (r.SessionId == SessionID)
+                {
+                    result = r;
+                }
             }
         }
 
-        Result result = new Result();
-        foreach (Result r in all_Results)
+
+        foreach (User user in users)
         {
-            if (r.SessionId == SessionID)
+            if (user_id == user.userID)
             {
-                result = r;
+                email = user.Email;
+                break;
             }
         }
 
@@ -137,7 +154,7 @@ else if (quizComplete == "False")
         userResults.Add(result.Role2Score, getRole(result.Role2ID, all_Roles));
         userResults.Add(result.Role3Score, getRole(result.Role3ID, all_Roles));
 
-        userModel.userID = userID;
+        userModel.userID = user_id;
         userModel.email = email;
         userLayout.InvokeAsync(userModel);
     }
@@ -154,8 +171,32 @@ else if (quizComplete == "False")
         return new Role();
     }
 
+    private void StartQuiz()
+    {
+        List<UserAnswer> all_user_answers = DbContext.UserAnswersNew.ToList();
+
+        int next_session_id = 0;
+
+        if (all_user_answers.Count() != 0)
+        {
+            next_session_id = all_user_answers.Last().SessionID + 1;
+        }
+
+        Navigation.NavigateTo($"/Quiz/{1}/{next_session_id}/{user_id}");
+    }
+
+    private void LogIn()
+    {
+        Navigation.NavigateTo($"/Login/{quizComplete}/{SessionID}");
+    }
+
+    private void Register()
+    {
+        Navigation.NavigateTo($"/Register/{quizComplete}/{SessionID}");
+    }
+
     [Parameter] public int SessionID { get; set; }
-    [Parameter] public string userID { get; set; }
-    [Parameter] public string quizComplete { get; set; }
+    [Parameter] public int user_id { get; set; }
+    [Parameter] public bool quizComplete { get; set; }
 }
 
