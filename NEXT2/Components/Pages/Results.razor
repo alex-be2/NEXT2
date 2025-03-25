@@ -1,4 +1,4 @@
-﻿@page "/Results/{sessionID:int}/{quizComplete}/{user_id:int}"
+﻿@page "/Results/{sessionID:int}/{quizComplete:bool}/{user_id:int}"
 @using NEXT2.Components.Layout
 @using NEXT2.Components.Models
 @layout ResultsLayout
@@ -44,7 +44,7 @@
 
     <div class="centre-content container-centre">
 
-        @if (user_id == null)
+        @if (user_id == -1)
         {
             <span style=" margin-top:20px">
                 <button @onclick="LogIn" class="margin-t-50 auth-a"> Log in</button>
@@ -133,7 +133,7 @@ else if (!quizComplete)
         {
             foreach (Result r in all_Results)
             {
-                if (r.SessionId == SessionID)
+                if (r.SessionID == SessionID)
                 {
                     result = r;
                 }
@@ -150,9 +150,13 @@ else if (!quizComplete)
             }
         }
 
-        userResults.Add(result.Role1Score, getRole(result.Role1ID, all_Roles));
-        userResults.Add(result.Role2Score, getRole(result.Role2ID, all_Roles));
-        userResults.Add(result.Role3Score, getRole(result.Role3ID, all_Roles));
+        if (quizComplete)
+        {
+            userResults.Add(result.Role1Score, getRole(result.Role1ID, all_Roles));
+            userResults.Add(result.Role2Score, getRole(result.Role2ID, all_Roles));
+            userResults.Add(result.Role3Score, getRole(result.Role3ID, all_Roles));
+        }
+        
 
         userModel.userID = user_id;
         userModel.email = email;

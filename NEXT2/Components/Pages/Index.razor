@@ -21,7 +21,7 @@
 
 
 @code {
-    private int? user_id = null; //null changed to -1 to represent no user having logged in
+    private int user_id = -1; //null changed to -1 to represent no user having logged in
     private void StartQuiz()
     {
         List<UserAnswer> all_user_answers = DbContext.UserAnswersNew.ToList();
@@ -38,6 +38,6 @@
 
     private void LogIn()
     {
-        Navigator.NavigateTo($"/Login/{false}/{null}");
+        Navigator.NavigateTo($"/Login/{false}/{-1}");
     }
 }

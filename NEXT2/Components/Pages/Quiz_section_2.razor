@@ -257,7 +257,7 @@
 
         //save results to db
         Result newResult = new Result();
-        newResult.SessionId = current_session_id;
+        newResult.SessionID = current_session_id;
         newResult.UserID = user_id;
         newResult.Role1ID = TopScores[0];
         newResult.Role1Score = TopScores[1];
@@ -268,7 +268,7 @@
 
         addResult(newResult);
 
-        Navigation.NavigateTo($"/Results/{current_session_id}/{true}");
+        Navigation.NavigateTo($"/Results/{current_session_id}/{true}/{user_id}");
     }
 
     private async Task addResult(Result newResult)
