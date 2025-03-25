@@ -1,4 +1,4 @@
-﻿@page "/Register"
+﻿@page "/Register/{quizComplete}/{current_session_id:int}"
 @using NEXT2.Components.Layout
 @layout MainLayout
 @using NEXT2.Components.Layout
@@ -42,7 +42,7 @@
     }
     <span class="margin-t-50" style=" padding-top:1px">
         Already have an account?
-        <a href="Login" class="margin-t-50 auth-a" style="font-weight:bold;">Log in</a>
+        <button @onclick="LogIn" class="margin-t-50 auth-a"> Log in</button>
     </span>
     <div class="container-space-between height-100">
         <a href="" class="white-button margin-t-50 no-link">
@@ -57,6 +57,10 @@
 
 
 @code {
+
+    [Parameter] public int? current_session_id { get; set; }
+    [Parameter] public bool quizComplete { get; set; }
+
     private string email = "";
     private string password = "";
     private string confirmPassword;
@@ -64,7 +68,6 @@
     private bool passwordMatch = false;
     int alert = 0;
     bool emptyTable = false;
-    bool quizComplete = false;
 
     private List<User> users;
 
@@ -127,6 +130,15 @@
                 newUser.Password = password;
 
                 AddUser(newUser);
+
+                if (quizComplete)
+                {
+                    //update results table
+                    Result currentResult = getResult(current_session_id);
+                    currentResult.UserID = newUser.userID;
+                    DbContext.Results.Update(currentResult);
+                    DbContext.SaveChangesAsync();
+                }
                 Navigation.NavigateTo($"/Results/{newUser.userID}/{quizComplete}");            
 
 
@@ -142,6 +154,25 @@
             alert = 0;
             StateHasChanged();
         }
+    }
+
+    private Result getResult(int? sessionID)
+    {
+        List<Result> all_results = DbContext.Results.ToList();
+
+        foreach (Result result in all_results)
+        {
+            if (result.SessionId == sessionID)
+            {
+                return result;
+            }
+        }
+        return new Result();
+    }
+
+    private void LogIn()
+    {
+        Navigation.NavigateTo($"/Login/{false}/{null}");
     }
 
     private async Task AddUser(User newuser)
