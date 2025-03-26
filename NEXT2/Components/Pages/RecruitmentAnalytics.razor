@@ -249,4 +249,28 @@
 
         return this_department;
     }
+    public Dictionary<User,int> GetTopCandidates()
+    {
+        foreach (User u in users)
+        {
+            foreach (Result r in results)
+            {
+                if (u.userID == r.UserID)
+                {
+                    getPercentage(getR, )
+                }
+            }
+        }   
+    }
+
+    public decimal getPercentage(Role role, int score)
+    {
+        double pct = 0;
+
+        pct = 50f + (Convert.ToDouble(score) / Convert.ToDouble(role.MaxScore)) * 100f;
+
+        if (pct >= 100) { pct = 97.5f; }
+
+        return Math.Round(Convert.ToDecimal(pct), 1);
+    }
 }
