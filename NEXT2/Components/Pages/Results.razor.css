@@ -15,7 +15,6 @@
 .compatibility-bar {
     height: 200px;
     width: 200px;
-    background: conic-gradient(#90E596 270deg, white 0deg);
     border-radius: 50%;
     display: flex;
     align-items: center;
