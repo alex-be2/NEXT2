@@ -206,41 +206,6 @@
 
     private Dictionary<Departments,int> GetTopDepartments()
     {
-        //     int currentCount = 0;
-        //     bool exists = false;
-        //     Dictionary<int, int> topDepartments = new Dictionary<int, int>();
-
-        //     foreach (Departments d in departments)
-        //     {
-        //         foreach (Role r in roles)
-        //         {
-        //             if (d.NodeID == r.FinalNodeID)
-        //             {
-        //                 foreach (KeyValuePair<int,int> kvp in GetTopRoles(true))
-        //                 {
-        //                     if(kvp.Key == r.RoleID)
-        //                     {
-        //                         foreach(KeyValuePair<int,int> kvpDep in topDepartments)
-        //                         {
-        //                             if (kvpDep.Key == d.DepartmentID)
-        //                             {
-        //                                 currentCount = kvpDep.Value;
-        //                                 topDepartments[kvpDep.Key] = currentCount + kvp.Value;
-        //                                 exists = true;
-        //                             }
-        //                         }
-        //                         if (!exists)
-        //                         {
-        //                             topDepartments.Add(d.DepartmentID, kvp.Value);
-        //                             exists = false;                                
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     return topDepartments;
-
         Dictionary<Departments, int> departmentScores = new Dictionary<Departments, int>();
 
         foreach(Departments dept in departments)
@@ -255,7 +220,11 @@
             departmentScores[getDepartment(result.Role3ID)] += 1;
         }
 
-        return departmentScores;
+        var sortedDictionary = departmentScores.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+
+        var first5 = sortedDictionary.Take(5).ToDictionary(x => x.Key, x => x.Value);
+
+        return first5;
     }
 
     public Departments getDepartment(int role_id)
@@ -283,5 +252,4 @@
 
         return this_department;
     }
-
 }
