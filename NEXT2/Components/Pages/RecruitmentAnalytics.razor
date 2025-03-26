@@ -1,0 +1,83 @@
+﻿@page "/RecruitmentAnalytics/{user_id:int}"
+@using NEXT2.Components.Layout
+@using NEXT2.Components.Models
+@layout ResultsLayout
+@using NEXT2.Data
+@inject NavigationManager Navigation
+@inject ApplicationDbContext DbContext
+@rendermode InteractiveServer
+
+<div class="centre-content">
+
+    <h3 style="top: 0; text-align: left;">Recruitment Page</h3>
+
+    <div class="white-container" style="width: 100%; height: 90%; ">
+        <div class="container-space-between">
+            <div class="white-container" style="border: 1px black solid; width: 47.5%; min-height: 300px;">
+                <h6 style="color: gray; text-align: left;">Top Departments</h6>
+
+
+            </div>
+            <div class="white-container" style="border: 1px black solid; width: 47.5%; min-height: 300px;">
+                <h6 style="color: gray; text-align: left;">*Select a department to view its top roles</h6>
+
+            </div>
+        </div>
+        <div class="container-space-between">
+            <div class="white-container" style="border: 1px black solid; width: 47.5%; min-height: 300px;">
+                <h6 style="color: gray; text-align: left;">Overall Top Roles</h6>
+            </div>
+            <div class="white-container" style="border: 1px black solid; width: 47.5%; min-height: 300px;">
+                <h6 style="color: gray; text-align: left;">Top Candidates</h6>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+    
+
+
+@code {
+    [Parameter] public int user_id { get; set; }
+
+    public UserModel userModel = new UserModel();
+
+    [CascadingParameter] public EventCallback<UserModel> userLayout { get; set; }
+
+    private string email;
+
+    private List<User> users = new List<User>();
+
+    private List<Result> results = new List<Result>();
+
+
+    protected override void OnInitialized()
+    {
+        users = DbContext.Users.ToList();
+
+        results = DbContext.Results.ToList();
+
+        foreach (User user in users)
+        {
+            if (user_id == user.userID)
+            {
+                email = user.Email;
+                break;
+            }
+        }
+
+        userModel.userID = user_id;
+        userModel.email = email;
+        userLayout.InvokeAsync(userModel);
+
+        foreach (Result r in results)
+        {
+            
+        }
+
+
+
+    }
+
+}

@@ -89,17 +89,25 @@
                     {
                         if (user.Email == email && user.Password == password)
                         {
-                            if (quizComplete)
+                            if (user.IsRecruiter == 1)
                             {
-                                //update results table
-                                Result currentResult = getResult(current_session_id);
-                                currentResult.UserID = user.userID;
-                                DbContext.Results.Update(currentResult);
-                                DbContext.SaveChangesAsync();
+                                Navigation.NavigateTo($"/RecruitmentAnalytics/{user.userID}");
                             }
-                            Navigation.NavigateTo($"/Results/{-1}/{quizComplete}/{user.userID}");
+                            else
+                            {
+                                if (quizComplete)
+                                {
+                                    //update results table
+                                    Result currentResult = getResult(current_session_id);
+                                    currentResult.UserID = user.userID;
+                                    DbContext.Results.Update(currentResult);
+                                    DbContext.SaveChangesAsync();
+                                }
+                                Navigation.NavigateTo($"/Results/{-1}/{quizComplete}/{user.userID}");
 
-                            return;
+                                return;
+                            }
+
                         }
                         else
                         {
