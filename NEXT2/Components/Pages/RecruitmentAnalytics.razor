@@ -35,6 +35,8 @@
             }
             else
             {
+                <h4>@selected_dept.DepartmentName</h4>
+                <hr />
                 <div class="container-space-between" style="align-items:center">
                     <p>Name of Role</p>
                     <p>Number of recommendations </p>
@@ -71,6 +73,23 @@
         <div class="white-container container-column" style="margin: 50px;">
             <h4 class="text-l">Top Candidates</h4>
             <hr />
+            <div class="container-space-between" style="align-items:center">
+                <p>Name of Candidate</p>
+                <p>Role</p>
+                <p>%</p>
+            </div>
+            <hr />
+            @foreach (KeyValuePair<User, Dictionary<Role, decimal>> user_kvp in GetTopCandidates())
+            {
+                <div class="container-space-between">
+                    <p>@user_kvp.Key.Email</p>
+                    @foreach (KeyValuePair<Role,decimal> kvp in user_kvp.Value )
+                    {
+                        <p>@kvp.Key.RoleName</p>
+                        <p>@kvp.Value %</p>
+                    }
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -95,6 +114,7 @@
     private List<Departments> departments = new List<Departments>();
 
     public Dictionary<Role, int> dept_Role_scores = new Dictionary<Role, int>();
+    public Departments selected_dept = new Departments();
 
 
     protected override void OnInitialized()
@@ -119,16 +139,6 @@
         userModel.userID = user_id;
         userModel.email = email;
         userLayout.InvokeAsync(userModel);
-
-        // foreach (KeyValuePair<int, int> kvp in GetTopDepartments())
-        // {
-        //     Console.WriteLine("--------");
-        //     Console.WriteLine(kvp.Key);
-        //     Console.WriteLine(kvp.Value);
-        //     Console.WriteLine("--------");
-
-        // }
-
     }
 
     private Dictionary<string, int> GetTopRolesDetails()
@@ -154,6 +164,8 @@
 
     private void displayTopDeptRoles(Departments dept)
     {
+        selected_dept = dept;
+
         dept_Role_scores = new Dictionary<Role, int>();
 
         Dictionary<int,int> topRoles = GetTopRoles(true);
@@ -312,18 +324,36 @@
 
         return this_department;
     }
-    public Dictionary<User,int> GetTopCandidates()
+    public Dictionary<User, Dictionary<Role, decimal>> GetTopCandidates()
+    {
+
+        Dictionary<User, Dictionary<Role, decimal>> topCandidates = new Dictionary<User, Dictionary<Role, decimal>>();
+
+        foreach (Result r in results)
+        {
+            User u = GetUserByID(r.UserID);
+            if (u.userID == r.UserID)
+            {
+                Dictionary<Role, decimal> role_dec_pair = new Dictionary<Role, decimal>();
+                role_dec_pair.Add(getRoleFromID(r.Role1ID), getPercentage(getRoleFromID(r.Role1ID), r.Role1Score));
+                topCandidates.Add(u, role_dec_pair);
+            }
+        } 
+        var sortedDictionary = topCandidates.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+
+
+        var first5 = sortedDictionary.Take(5).ToDictionary(x => x.Key, x => x.Value);
+
+        return first5;
+    }
+
+    public User GetUserByID(int? userID)
     {
         foreach (User u in users)
         {
-            foreach (Result r in results)
-            {
-                if (u.userID == r.UserID)
-                {
-                    getPercentage(getR, )
-                }
-            }
-        }   
+            if (u.userID== userID) { return u; }
+        }
+        return new User();
     }
 
     public decimal getPercentage(Role role, int score)
