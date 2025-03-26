@@ -12,13 +12,13 @@
     <div class="centre-content container-centre margin-t-50">
         <h1 class="text-l">Results </h1>
 
-        @foreach (KeyValuePair<Role,int> kvp in userResults)
+        @foreach (KeyValuePair<Role,decimal> kvp in userResults)
         {
             <div class="white-container container-flex">
-                <div class="compatibility-bar" style="background: conic-gradient(#@getColour(getPercentage(kvp)) @CompatDonut(getPercentage(kvp))deg, white 0deg);">
+                <div class="compatibility-bar" style="background: conic-gradient(#@getColour(kvp.Value) @CompatDonut(kvp.Value)deg, white 0deg);">
                     <div class="percent">
                         <div class="container-flex">
-                            <p style="font-size: 24pt; margin: 0;">@getPercentage(kvp)</p>
+                            <p style="font-size: 24pt; margin: 0;">@kvp.Value</p>
                             <p style="font-size: 24pt; margin: 0;">%</p>
                         </div>
                         <p>compatible</p>
@@ -102,7 +102,7 @@ else if (!quizComplete)
 @code {
     private string email;
     private List<User> users = new List<User>();
-    private Dictionary<Role,int> userResults = new Dictionary<Role,int>();
+    private Dictionary<Role,decimal> userResults = new Dictionary<Role,decimal>();
 
 
     public UserModel userModel = new UserModel();
@@ -152,11 +152,12 @@ else if (!quizComplete)
 
         if (quizComplete)
         {
-            userResults.Add(getRole(result.Role1ID, all_Roles), result.Role1Score);
-            userResults.Add(getRole(result.Role2ID, all_Roles), result.Role2Score);
-            userResults.Add(getRole(result.Role3ID, all_Roles), result.Role3Score);
+            userResults.Add(getRole(result.Role1ID, all_Roles), getPercentage(getRole(result.Role1ID, all_Roles), result.Role1Score));
+            userResults.Add(getRole(result.Role2ID, all_Roles), getPercentage(getRole(result.Role2ID, all_Roles), result.Role2Score));
+            userResults.Add(getRole(result.Role3ID, all_Roles), getPercentage(getRole(result.Role3ID, all_Roles), result.Role3Score));
         }
 
+        userResults.OrderByDescending(key => key.Value);
 
         userModel.userID = user_id;
         userModel.email = email;
@@ -175,13 +176,13 @@ else if (!quizComplete)
         return new Role();
     }
 
-    public decimal? getPercentage(KeyValuePair<Role,int> kvp)
+    public decimal getPercentage(Role role,int score)
     {
-        double? pct = 0;
+        double pct = 0;
 
-        pct = 50f + (Convert.ToDouble(kvp.Value)/ Convert.ToDouble(kvp.Key.MaxScore)) * 100f;
+        pct = 50f + (Convert.ToDouble(score)/ Convert.ToDouble(role.MaxScore)) * 100f;
 
-        if (pct >= 100) { pct = 99.9f; }
+        if (pct >= 100) { pct = 97.5f; }
 
         return Math.Round(Convert.ToDecimal(pct),1);
     }
