@@ -15,40 +15,37 @@
         <div class="white-container container-column" style="margin: 50px;">
             <h4 class="text-l">Top Departments</h4>
             <hr />
+            <div class="container-space-between">
+                <p>Name of Department</p>
+                <p>Number of recommendations </p>
+            </div>
+            <hr />
             @foreach (KeyValuePair<Departments,int> dept_kvp in GetTopDepartments())
             {
                 <div class="container-space-between">
-                    <div class="container-flex">
-                        <p>Name of Department:    </p>
-                        <p>@dept_kvp.Key.DepartmentName</p>
-                    </div>
-                    <div class="container-flex">
-                        <p>Number of recommendations:    </p>
-                        <p>@dept_kvp.Value</p>
-                    </div>
+                    <p>@dept_kvp.Key.DepartmentName</p>
+                    <p>@dept_kvp.Value</p>
                 </div>
             }
         </div>
         <div class="white-container container-column" style="margin: 50px;">
-            <p class="centered-text">Select a department to view its top roles</p>
+            <p>Select a department to view its top roles</p>
         </div>
     </div>
     <div class="container-row margin-t-50" >
         <div class="white-container container-column" style="margin: 50px;">
             <h4 class="text-l">Overall Top Roles</h4>
             <hr />
-
+            <div class="container-space-between">
+                <p>Name of Department</p>
+                <p>Number of recommendations </p>
+            </div>
+            <hr />
             @foreach (KeyValuePair<string,int> role_kvp in GetTopRolesDetails())
             {
                 <div class="container-space-between">
-                    <div class="container-flex">
-                        <p>Name of Role:    </p>
-                        <p>@role_kvp.Key</p>
-                    </div>
-                    <div class="container-flex">
-                        <p>Number of recommendations:    </p>
-                        <p>@role_kvp.Value</p>
-                    </div>
+                    <p>@role_kvp.Key</p>
+                    <p>@role_kvp.Value</p>
                 </div>
             }
         </div>
