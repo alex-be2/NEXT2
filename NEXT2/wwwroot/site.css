@@ -30,6 +30,21 @@ body {
     margin:auto;
 }
 
+
+
+.container-row {
+    height: 400px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.container-column {
+    width: 50%;
+    height: 100%;
+    flex-direction: row;
+}
+
 .white-container {
     background-color: white;
     border-radius: 5px;

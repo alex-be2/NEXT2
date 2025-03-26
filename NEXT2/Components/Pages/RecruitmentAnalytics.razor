@@ -7,34 +7,28 @@
 @inject ApplicationDbContext DbContext
 @rendermode InteractiveServer
 
-<div class="centre-content">
+<div style="margin: 50px">
 
-    <h3 style="top: 0; text-align: left;">Recruitment Page</h3>
+    <h2 class="text-l" style="margin-left: 50px">Recruitment Analytics</h2>
 
-    <div class="white-container" style="width: 100%; height: 90%; ">
-        <div class="container-space-between">
-            <div class="white-container" style="border: 1px black solid; width: 47.5%; min-height: 300px;">
-                <h6 style="color: gray; text-align: left;">Top Departments</h6>
-            </div>
-            <div class="white-container" style="border: 1px black solid; width: 47.5%; min-height: 300px;">
-                <h6 style="color: gray; text-align: left;">*Select a department to view its top roles</h6>
-
-            </div>
+    <div class="container-row">
+        <div class="white-container container-column" style="margin: 50px;">
+            <h4 class="text-l">Top Departments</h4>
+            <hr />
         </div>
-        <div class="container-space-between">
-            <div class="white-container" style="border: 1px black solid; width: 47.5%; min-height: 300px;">
-                <h6 style="color: gray; text-align: left;">Overall Top Roles</h6>
-                @foreach (KeyValuePair<string, int> kvp in GetTopRolesDetails())
-                {
-                    <p>@kvp.Key    -    @kvp.Value</p>
-                }
-            </div>
-            <div class="white-container" style="border: 1px black solid; width: 47.5%; min-height: 300px;">
-                <h6 style="color: gray; text-align: left;">Top Candidates</h6>
-
-            </div>
+        <div class="white-container container-column" style="margin: 50px;">
+            <p class="centered-text">Select a department to view its top roles</p>
         </div>
-
+    </div>
+    <div class="container-row margin-t-50" >
+        <div class="white-container container-column" style="margin: 50px;">
+            <h4 class="text-l">Overall Top Roles</h4>
+            <hr />
+        </div>
+        <div class="white-container container-column" style="margin: 50px;">
+            <h4 class="text-l">Top Candidates</h4>
+            <hr />
+        </div>
     </div>
 </div>
     
