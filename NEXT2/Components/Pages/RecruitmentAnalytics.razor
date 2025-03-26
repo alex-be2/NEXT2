@@ -15,8 +15,6 @@
         <div class="container-space-between">
             <div class="white-container" style="border: 1px black solid; width: 47.5%; min-height: 300px;">
                 <h6 style="color: gray; text-align: left;">Top Departments</h6>
-
-
             </div>
             <div class="white-container" style="border: 1px black solid; width: 47.5%; min-height: 300px;">
                 <h6 style="color: gray; text-align: left;">*Select a department to view its top roles</h6>
@@ -26,6 +24,10 @@
         <div class="container-space-between">
             <div class="white-container" style="border: 1px black solid; width: 47.5%; min-height: 300px;">
                 <h6 style="color: gray; text-align: left;">Overall Top Roles</h6>
+                @foreach (KeyValuePair<string, int> kvp in GetTopRolesDetails())
+                {
+                    <p>@kvp.Key    -    @kvp.Value</p>
+                }
             </div>
             <div class="white-container" style="border: 1px black solid; width: 47.5%; min-height: 300px;">
                 <h6 style="color: gray; text-align: left;">Top Candidates</h6>
@@ -51,12 +53,16 @@
 
     private List<Result> results = new List<Result>();
 
+    private List<Role> roles = new List<Role>();
+
 
     protected override void OnInitialized()
     {
         users = DbContext.Users.ToList();
 
         results = DbContext.Results.ToList();
+
+        roles = DbContext.Roles.ToList();
 
         foreach (User user in users)
         {
@@ -70,14 +76,158 @@
         userModel.userID = user_id;
         userModel.email = email;
         userLayout.InvokeAsync(userModel);
+    }
+
+    private Dictionary<string, int> GetTopRolesDetails()
+    {
+        Dictionary<string, int> roleDesc = new Dictionary<string, int>();
+
+        foreach(Role r in roles)
+        {
+            foreach (KeyValuePair<int,int> topRole in GetTopRoles())
+            {
+                if (topRole.Key == r.RoleID)
+                {
+                    roleDesc.Add(r.RoleName, topRole.Value);
+                }
+            }            
+        }
+
+        var sortedDictionary = roleDesc.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+
+        return sortedDictionary;
+
+        // if (input == 1)
+        // {
+        //     return sortedDictionary.Take(1).ToDictionary(x => x.Key, x => x.Value);
+        // }
+        // else if (input == 2)
+        // {
+        //     var Entry = sortedDictionary.First();
+        //     sortedDictionary.Remove(Entry.Key);
+        //     return sortedDictionary.Take(1).ToDictionary(x => x.Key, x => x.Value);
+        // }
+        // else if (input == 3)
+        // {
+        //     for (int i = 0; i < 2; i++)
+        //     {
+        //         var Entry = sortedDictionary.First();
+        //         sortedDictionary.Remove(Entry.Key);
+        //     }
+        //     return sortedDictionary.Take(1).ToDictionary(x => x.Key, x => x.Value);
+        // }
+        // else if (input == 4)
+        // {
+        //     for (int i = 0; i < 3; i++)
+        //     {
+        //         var Entry = sortedDictionary.First();
+        //         sortedDictionary.Remove(Entry.Key);
+        //     }
+        //     return sortedDictionary.Take(1).ToDictionary(x => x.Key, x => x.Value);
+        // }
+        // else if (input == 5)
+        // {
+        //     for (int i = 0; i < 4; i++)
+        //     {
+        //         var Entry = sortedDictionary.First();
+        //         sortedDictionary.Remove(Entry.Key);
+        //     }
+        //     return sortedDictionary.Take(1).ToDictionary(x => x.Key, x => x.Value);
+        // }
+        // else
+        // {
+        // Dictionary<string, int> empty = new Dictionary<string, int>();
+        // return empty;
+        // }
+
+    }
+    private Dictionary<int,int> GetTopRoles()
+    {
+        int currentCount = 0;
+        bool role1exists = false;
+        bool role2exists = false;
+        bool role3exists = false;
+
+
+        Dictionary<int, int> roleCount = new Dictionary<int, int>();
 
         foreach (Result r in results)
         {
-            
+            foreach (KeyValuePair<int,int> kvp in roleCount)
+            {
+                if (kvp.Key == r.Role1ID)
+                {
+                    currentCount = kvp.Value;
+
+                    roleCount[kvp.Key] = currentCount + 1;
+
+                    // roleCount.Remove(kvp.Key);
+
+                    // roleCount.Add(kvp.Key, currentCount + 1);
+
+                    //currentCount = 0;
+
+                    role1exists = true;
+                }
+                if (kvp.Key == r.Role2ID)
+                {
+                    currentCount = kvp.Value;
+
+                    roleCount[kvp.Key] = currentCount + 1;
+
+                    // roleCount.Remove(kvp.Key);
+
+                    // roleCount.Add(kvp.Key, currentCount + 1);
+
+                    // currentCount = 0;
+
+                    role2exists = true;
+                }
+                if (kvp.Key == r.Role3ID)
+                {
+                    currentCount = kvp.Value;
+
+                    roleCount[kvp.Key] = currentCount + 1;
+
+                    // roleCount.Remove(kvp.Key);
+
+                    // roleCount.Add(kvp.Key, currentCount + 1);
+
+                    // currentCount = 0;
+
+                    role3exists = true;
+                }
+            }
+
+            if (!role1exists)
+            {
+                roleCount.Add(r.Role1ID, 1);
+            }
+            if (!role2exists)
+            {
+                roleCount.Add(r.Role2ID, 1);
+            }
+            if (!role3exists)
+            {
+                roleCount.Add(r.Role3ID, 1);
+            }
+            role1exists = false;
+            role2exists = false;
+            role3exists = false;
+
+
+
+
+            // roleCount.Add(r.Role1ID, 1);
+            // roleCount.Add(r.Role2ID, 1);
+            // roleCount.Add(r.Role3ID, 1);
         }
 
+        var sortedDictionary = roleCount.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
+        var first5 = sortedDictionary.Take(5).ToDictionary(x => x.Key, x => x.Value);
 
+        return first5;
     }
 
 }
