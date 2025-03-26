@@ -15,29 +15,48 @@
         <div class="white-container container-column" style="margin: 50px;">
             <h4 class="text-l">Top Departments</h4>
             <hr />
-            <div class="container-space-between">
+            <div class="container-space-between" style="align-items:center">
                 <p>Name of Department</p>
                 <p>Number of recommendations </p>
             </div>
             <hr />
             @foreach (KeyValuePair<Departments,int> dept_kvp in GetTopDepartments())
             {
-                <div class="container-space-between">
+                <div class="container-space-between selectable-container" @onclick="() => displayTopDeptRoles(dept_kvp.Key)">
                     <p>@dept_kvp.Key.DepartmentName</p>
                     <p>@dept_kvp.Value</p>
                 </div>
             }
         </div>
         <div class="white-container container-column" style="margin: 50px;">
-            <p>Select a department to view its top roles</p>
+            @if (dept_Role_scores.Count() == 0)
+            {
+                <p>Select a department to view its top roles</p>
+            }
+            else
+            {
+                <div class="container-space-between" style="align-items:center">
+                    <p>Name of Role</p>
+                    <p>Number of recommendations </p>
+                </div>
+                <hr />
+                foreach(KeyValuePair<Role,int> dept_role_kvp in dept_Role_scores)
+                {
+                    <div class="container-space-between">
+                        <p>@dept_role_kvp.Key.RoleName</p>
+                        <p>@dept_role_kvp.Value</p>
+                    </div>
+                }
+            }
+            
         </div>
     </div>
     <div class="container-row margin-t-50" >
         <div class="white-container container-column" style="margin: 50px;">
             <h4 class="text-l">Overall Top Roles</h4>
             <hr />
-            <div class="container-space-between">
-                <p>Name of Department</p>
+            <div class="container-space-between" style="align-items:center">
+                <p>Name of Role</p>
                 <p>Number of recommendations </p>
             </div>
             <hr />
@@ -74,6 +93,8 @@
     private List<Role> roles = new List<Role>();
 
     private List<Departments> departments = new List<Departments>();
+
+    public Dictionary<Role, int> dept_Role_scores = new Dictionary<Role, int>();
 
 
     protected override void OnInitialized()
@@ -130,6 +151,48 @@
         return sortedDictionary;
 
     }
+
+    private void displayTopDeptRoles(Departments dept)
+    {
+        dept_Role_scores = new Dictionary<Role, int>();
+
+        Dictionary<int,int> topRoles = GetTopRoles(true);
+
+        foreach (KeyValuePair<int,int> kvp in topRoles)
+        {
+            if (checkRoleDept(kvp.Key,dept))
+            {
+                dept_Role_scores.Add(getRoleFromID(kvp.Key), kvp.Value);
+            }
+        }
+    }
+
+    public Role getRoleFromID(int id)
+    {
+        foreach (Role r in roles)
+        {
+            if (r.RoleID == id) { return r; }
+        }
+        return new Role();
+    }
+
+    private bool checkRoleDept(int roleID, Departments dept)
+    {
+        Role this_role = new Role();
+
+        foreach (Role r in roles)
+        {
+            if (r.RoleID == roleID)
+            {
+                this_role = r;
+                break;
+            }
+        }
+
+        if (this_role.FinalNodeID == dept.NodeID) { return true; }
+        return false;
+    }
+
     private Dictionary<int,int> GetTopRoles(bool all)
     {
         int currentCount = 0;
@@ -207,7 +270,7 @@
 
         foreach(Departments dept in departments)
         {
-            departmentScores.Add(dept, 0);    
+            departmentScores.Add(dept, 0);
         }
 
         foreach (Result result in results)

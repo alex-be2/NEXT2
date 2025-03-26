@@ -39,6 +39,15 @@ body {
     flex-direction: row;
 }
 
+.selectable-container {
+    align-items: center;
+    cursor: pointer;
+}
+
+.selectable-container:hover, .selectable-container::selection {
+    background-color: white;
+}
+
 .container-column {
     width: 50%;
     height: 100%;
