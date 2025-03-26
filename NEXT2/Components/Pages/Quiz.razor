@@ -262,7 +262,7 @@
             }
         }
 
-        
+
 
         foreach (Answer a in user_answers)
         {
@@ -293,6 +293,8 @@
                 }
                 else
                 {
+                    
+
                     Navigation.NavigateTo($"/Quiz_section_2/{current_node.Path1}/{current_session_id}/{user_id}");
                 }
             }
@@ -304,6 +306,8 @@
                 }
                 else
                 {
+                    
+
                     Navigation.NavigateTo($"/Quiz_section_2/{current_node.Path1}/{current_session_id}/{user_id}");
                 }
             }
@@ -311,6 +315,7 @@
         }
         else { missingAnswers = true; }
     }
+
 
     protected void updateDB()
     {

@@ -2,6 +2,7 @@
 @page "/Quiz_section_2/{current_node_id:int}/{current_session_id:int}/{user_id:int}"
 @using NEXT2.Data
 @inject ApplicationDbContext Db_Context
+@inject ApplicationDbContext Db_Context_deleter
 @inject NavigationManager Navigation
 @inject UserAnwserService UserAnwserService
 @rendermode InteractiveServer
@@ -50,7 +51,7 @@
                 string rName = currentQuestion.QuestionID.ToString();
                 <div style="padding: 30px;">
                     <p class="text-l">@currentQuestion.QuestionText</p>
-                    <div class="container-space-between">
+                    <div class="text-l">
                         @foreach (Answer answer in getAnswers(currentQuestion.QuestionID))
                         {
                             <label class="container">
@@ -231,16 +232,15 @@
         }
         else
         {
-            Navigation.NavigateTo($"/Quiz_section_2/{current_node.ParentNodeId}/{current_session_id}/{user_id}");
+            Navigation.NavigateTo($"/Quiz/{current_node.ParentNodeId}/{current_session_id}/{user_id}");
         }
     }
 
     protected void CompleteQuiz()
     {
-        Scores.OrderDescending();
         List<int> TopScores = new List<int>();
 
-        foreach (KeyValuePair<int, int> kvp in Scores)
+        foreach (KeyValuePair<int, int> kvp in Scores.OrderByDescending(key=>key.Value))
         {
             if (TopScores.Count() == 3)
             {
@@ -266,7 +266,18 @@
 
         addResult(newResult);
 
+        clearUserAnswers();
+
         Navigation.NavigateTo($"/Results/{current_session_id}/{true}/{user_id}");
+    }
+
+
+    private async Task clearUserAnswers()
+    {
+        List<UserAnswer> curr_user_answers = Db_Context_deleter.UserAnswersNew.Where(x => x.SessionID == current_session_id).ToList();
+       
+        Db_Context_deleter.UserAnswersNew.RemoveRange(curr_user_answers);
+        await Db_Context_deleter.SaveChangesAsync();
     }
 
     private async Task addResult(Result newResult)
