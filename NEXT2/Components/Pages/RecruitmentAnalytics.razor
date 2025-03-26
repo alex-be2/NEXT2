@@ -15,6 +15,19 @@
         <div class="white-container container-column" style="margin: 50px;">
             <h4 class="text-l">Top Departments</h4>
             <hr />
+            @foreach (KeyValuePair<Departments,int> dept_kvp in GetTopDepartments())
+            {
+                <div class="container-space-between">
+                    <div class="container-flex">
+                        <p>Name of Department:    </p>
+                        <p>@dept_kvp.Key.DepartmentName</p>
+                    </div>
+                    <div class="container-flex">
+                        <p>Number of recommendations:    </p>
+                        <p>@dept_kvp.Value</p>
+                    </div>
+                </div>
+            }
         </div>
         <div class="white-container container-column" style="margin: 50px;">
             <p class="centered-text">Select a department to view its top roles</p>
@@ -24,6 +37,20 @@
         <div class="white-container container-column" style="margin: 50px;">
             <h4 class="text-l">Overall Top Roles</h4>
             <hr />
+
+            @foreach (KeyValuePair<string,int> role_kvp in GetTopRolesDetails())
+            {
+                <div class="container-space-between">
+                    <div class="container-flex">
+                        <p>Name of Role:    </p>
+                        <p>@role_kvp.Key</p>
+                    </div>
+                    <div class="container-flex">
+                        <p>Number of recommendations:    </p>
+                        <p>@role_kvp.Value</p>
+                    </div>
+                </div>
+            }
         </div>
         <div class="white-container container-column" style="margin: 50px;">
             <h4 class="text-l">Top Candidates</h4>
@@ -49,6 +76,8 @@
 
     private List<Role> roles = new List<Role>();
 
+    private List<Departments> departments = new List<Departments>();
+
 
     protected override void OnInitialized()
     {
@@ -57,6 +86,8 @@
         results = DbContext.Results.ToList();
 
         roles = DbContext.Roles.ToList();
+
+        departments = DbContext.Departments.ToList();
 
         foreach (User user in users)
         {
@@ -70,6 +101,16 @@
         userModel.userID = user_id;
         userModel.email = email;
         userLayout.InvokeAsync(userModel);
+
+        // foreach (KeyValuePair<int, int> kvp in GetTopDepartments())
+        // {
+        //     Console.WriteLine("--------");
+        //     Console.WriteLine(kvp.Key);
+        //     Console.WriteLine(kvp.Value);
+        //     Console.WriteLine("--------");
+
+        // }
+
     }
 
     private Dictionary<string, int> GetTopRolesDetails()
@@ -78,7 +119,7 @@
 
         foreach(Role r in roles)
         {
-            foreach (KeyValuePair<int,int> topRole in GetTopRoles())
+            foreach (KeyValuePair<int,int> topRole in GetTopRoles(false))
             {
                 if (topRole.Key == r.RoleID)
                 {
@@ -91,51 +132,8 @@
 
         return sortedDictionary;
 
-        // if (input == 1)
-        // {
-        //     return sortedDictionary.Take(1).ToDictionary(x => x.Key, x => x.Value);
-        // }
-        // else if (input == 2)
-        // {
-        //     var Entry = sortedDictionary.First();
-        //     sortedDictionary.Remove(Entry.Key);
-        //     return sortedDictionary.Take(1).ToDictionary(x => x.Key, x => x.Value);
-        // }
-        // else if (input == 3)
-        // {
-        //     for (int i = 0; i < 2; i++)
-        //     {
-        //         var Entry = sortedDictionary.First();
-        //         sortedDictionary.Remove(Entry.Key);
-        //     }
-        //     return sortedDictionary.Take(1).ToDictionary(x => x.Key, x => x.Value);
-        // }
-        // else if (input == 4)
-        // {
-        //     for (int i = 0; i < 3; i++)
-        //     {
-        //         var Entry = sortedDictionary.First();
-        //         sortedDictionary.Remove(Entry.Key);
-        //     }
-        //     return sortedDictionary.Take(1).ToDictionary(x => x.Key, x => x.Value);
-        // }
-        // else if (input == 5)
-        // {
-        //     for (int i = 0; i < 4; i++)
-        //     {
-        //         var Entry = sortedDictionary.First();
-        //         sortedDictionary.Remove(Entry.Key);
-        //     }
-        //     return sortedDictionary.Take(1).ToDictionary(x => x.Key, x => x.Value);
-        // }
-        // else
-        // {
-        // Dictionary<string, int> empty = new Dictionary<string, int>();
-        // return empty;
-        // }
-
     }
-    private Dictionary<int,int> GetTopRoles()
+    private Dictionary<int,int> GetTopRoles(bool all)
     {
         int currentCount = 0;
         bool role1exists = false;
@@ -155,12 +153,6 @@
 
                     roleCount[kvp.Key] = currentCount + 1;
 
-                    // roleCount.Remove(kvp.Key);
-
-                    // roleCount.Add(kvp.Key, currentCount + 1);
-
-                    //currentCount = 0;
-
                     role1exists = true;
                 }
                 if (kvp.Key == r.Role2ID)
@@ -169,12 +161,6 @@
 
                     roleCount[kvp.Key] = currentCount + 1;
 
-                    // roleCount.Remove(kvp.Key);
-
-                    // roleCount.Add(kvp.Key, currentCount + 1);
-
-                    // currentCount = 0;
-
                     role2exists = true;
                 }
                 if (kvp.Key == r.Role3ID)
@@ -182,12 +168,6 @@
                     currentCount = kvp.Value;
 
                     roleCount[kvp.Key] = currentCount + 1;
-
-                    // roleCount.Remove(kvp.Key);
-
-                    // roleCount.Add(kvp.Key, currentCount + 1);
-
-                    // currentCount = 0;
 
                     role3exists = true;
                 }
@@ -208,20 +188,100 @@
             role1exists = false;
             role2exists = false;
             role3exists = false;
-
-
-
-
-            // roleCount.Add(r.Role1ID, 1);
-            // roleCount.Add(r.Role2ID, 1);
-            // roleCount.Add(r.Role3ID, 1);
         }
 
         var sortedDictionary = roleCount.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
-        var first5 = sortedDictionary.Take(5).ToDictionary(x => x.Key, x => x.Value);
+        if (all)
+        {
+            return sortedDictionary;
+        }
+        else
+        {
+            var first5 = sortedDictionary.Take(5).ToDictionary(x => x.Key, x => x.Value);
 
-        return first5;
+            return first5;
+        }
+    }
+
+    private Dictionary<Departments,int> GetTopDepartments()
+    {
+        //     int currentCount = 0;
+        //     bool exists = false;
+        //     Dictionary<int, int> topDepartments = new Dictionary<int, int>();
+
+        //     foreach (Departments d in departments)
+        //     {
+        //         foreach (Role r in roles)
+        //         {
+        //             if (d.NodeID == r.FinalNodeID)
+        //             {
+        //                 foreach (KeyValuePair<int,int> kvp in GetTopRoles(true))
+        //                 {
+        //                     if(kvp.Key == r.RoleID)
+        //                     {
+        //                         foreach(KeyValuePair<int,int> kvpDep in topDepartments)
+        //                         {
+        //                             if (kvpDep.Key == d.DepartmentID)
+        //                             {
+        //                                 currentCount = kvpDep.Value;
+        //                                 topDepartments[kvpDep.Key] = currentCount + kvp.Value;
+        //                                 exists = true;
+        //                             }
+        //                         }
+        //                         if (!exists)
+        //                         {
+        //                             topDepartments.Add(d.DepartmentID, kvp.Value);
+        //                             exists = false;                                
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     return topDepartments;
+
+        Dictionary<Departments, int> departmentScores = new Dictionary<Departments, int>();
+
+        foreach(Departments dept in departments)
+        {
+            departmentScores.Add(dept, 0);    
+        }
+
+        foreach (Result result in results)
+        {
+            departmentScores[getDepartment(result.Role1ID)] += 1;
+            departmentScores[getDepartment(result.Role2ID)] += 1;
+            departmentScores[getDepartment(result.Role3ID)] += 1;
+        }
+
+        return departmentScores;
+    }
+
+    public Departments getDepartment(int role_id)
+    {
+        Role this_role = new Role();
+
+        foreach (Role r in roles)
+        {
+            if (r.RoleID == role_id)
+            {
+                this_role = r;
+                break;
+            }
+        }
+
+        Departments this_department = new Departments();
+
+        foreach (Departments dept in departments)
+        {
+            if (dept.NodeID == this_role.FinalNodeID)
+            {
+                this_department = dept;
+            }
+        }
+
+        return this_department;
     }
 
 }
