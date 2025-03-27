@@ -34,7 +34,7 @@
 
         if (all_user_answers.Count() != 0)
         {
-            next_session_id = all_user_answers.Last().SessionID + 1;
+            next_session_id = all_user_answers.Max(x => x.SessionID) + 1;
         }
 
         Navigator.NavigateTo($"/Quiz/{1}/{next_session_id}/{user_id}");
