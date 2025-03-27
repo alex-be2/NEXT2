@@ -31,20 +31,17 @@
                 <img src="NEXT-CAREERS.png" style="height: 30px; width: 150px;"/>
                 
 
-                @if (userModel == null)
+                @if (userModel != null)
                 {
-                    <NavLink class="nav-link" href="Login" Match="NavLinkMatch.All">
-                        <span aria-hidden="true"></span> <span style="color:black;"><i class="fa-solid fa-user"></i></span>
-                    </NavLink>
-                }
-                else if (userModel != null)
-                {
-                    <div class="container-flex" style="align-items: center;">
-                        <p style="font-size: 17px; margin:0;">@userModel.email</p>
+                    if (userModel.userID != -1)
+                    {
+                        <div class="container-flex" style="align-items: center;">
+                            <p style="font-size: 17px; margin:0;">@userModel.email</p>
                             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                                 <span aria-hidden="true"></span> <span style="color:black; font-size: 20px;"><i class="fas fa-right-from-bracket"></i></span>
                             </NavLink>
-                    </div>
+                        </div>                        
+                    }
                 }
             </div>
             <article class="content px-4">

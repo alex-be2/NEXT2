@@ -8,13 +8,16 @@
 @rendermode InteractiveServer
 @layout MainLayout
 
+<button @onclick="LogIn" class="login-nav">
+    <span style="color:black; border: 0;"><i class="fa-solid fa-user"></i></span>
+</button>
 
 <div class="centre-content container-centre margin-t-50">
     <div style="margin-top: 200px"></div>
      
     <div class="image-container">
         <h1 class="top-left-text white-banner" style="color: black;">@department_name</h1>
-        <img class="background-container" style="width: 100%; color:white;" src="@image_link"/>
+        <img class="background-container" style="width: 100%; color:white; margin: 0;" src="@image_link"/>
     </div>
     <div class="white-container">
         <div style="background-color: black; border-radius: 5px; height: 40px; border: 3px solid black; margin-bottom: 30px; width: @getCompletion()%">
@@ -284,6 +287,11 @@
     {
         Db_Context.Results.Add(newResult);
         await Db_Context.SaveChangesAsync();
+    }
+
+    private void LogIn()
+    {
+        Navigation.NavigateTo($"/Login/{false}/{-1}");
     }
 }
 

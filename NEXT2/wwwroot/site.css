@@ -163,6 +163,20 @@ h1 {
     text-decoration: none;
 }
 
+.login-nav{
+    position: absolute;
+    top:50px;
+    right: 50px;
+}
+
+button {
+    border: 0;
+    outline: none;
+    outline-style: none;
+    box-shadow: none;
+    background: var(--background-grey);
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;

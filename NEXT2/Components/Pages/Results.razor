@@ -7,6 +7,13 @@
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
+@if (user_id == -1)
+{
+    <button @onclick="LogIn" class="login-nav">
+        <span style="color:black; border: 0;"><i class="fa-solid fa-user"></i></span>
+    </button>
+}
+
 @if (quizComplete)
 {
     <div class="centre-content container-centre margin-t-50">
@@ -57,7 +64,7 @@ else if (!quizComplete)
     <div class="centre-content container-centre">
         <span style="margin-top:20px">
             You have not yet completed the quiz. You can do so
-            <button @onclick="StartQuiz" class="margin-t-50 auth-a"> here</button>.
+            <button @onclick="StartQuiz" class="margin-t-50 auth-a"><b>here</b></button>.
         </span>
     </div>
 

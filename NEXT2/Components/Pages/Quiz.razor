@@ -7,6 +7,10 @@
 @rendermode InteractiveServer
 @layout MainLayout
 
+<button @onclick="LogIn" class="login-nav">
+    <span style="color:black; border: 0;"><i class="fa-solid fa-user"></i></span>
+</button>
+
 <div class="centre-content container-centre margin-t-50">
     @*progress bar*@
     <div style="text-align:center">
@@ -404,6 +408,11 @@
         {
             user_answers[2] = a;
         }
+    }
+
+    private void LogIn()
+    {
+        Navigation.NavigateTo($"/Login/{false}/{-1}");
     }
 
 }
