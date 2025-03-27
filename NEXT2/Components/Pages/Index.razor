@@ -30,10 +30,11 @@
     {
         List<UserAnswer> all_user_answers = DbContext.UserAnswersNew.ToList();
 
-        int next_session_id = 0;
+                int next_session_id = 0;
 
         if (all_user_answers.Count() != 0)
         {
+            // UserAnswer test = all_user_answers.Where(x => x.SessionID = all_user_answers.Max(x => x.SessionID));
             next_session_id = all_user_answers.Max(x => x.SessionID) + 1;
         }
 

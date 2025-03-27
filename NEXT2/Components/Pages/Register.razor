@@ -5,6 +5,7 @@
 @using NEXT2.Components.Services
 @using NEXT2.Data
 @inject ApplicationDbContext DbContext
+@inject ApplicationDbContext Db_Context_deleter
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
@@ -74,17 +75,24 @@
 
     User newUser = new User();
 
+    int nextUserID = 0;
+
+    List<Result> all_results;
+
     protected override void OnInitialized()
     {
         try
         {
             users = DbContext.Users.ToList();
+            nextUserID = users.Last().userID + 1;
+            all_results = DbContext.Results.ToList();
         }
         catch
         {
 
         }
     }
+
 
     protected void register()
     {
@@ -134,15 +142,14 @@
 
                 AddUser(newUser);
 
+                // int newUserID = getUser(newUser.Email).userID;
+
+
                 if (quizComplete)
                 {
-                    //update results table
-                    Result currentResult = getResult(current_session_id);
-                    currentResult.UserID = newUser.userID;
-                    DbContext.Results.Update(currentResult);
-                    DbContext.SaveChangesAsync();
+                    updateUserId();
                 }
-                Navigation.NavigateTo($"/Results/{-1}/{quizComplete}/{newUser.userID}");
+                Navigation.NavigateTo($"/Results/{-1}/{quizComplete}/{nextUserID}");
 
 
             }
@@ -159,10 +166,17 @@
         }
     }
 
+    private async Task updateUserId()
+    {
+        Result currentResult = await DbContext.Results.FindAsync(getResult(current_session_id).ResultID);
+        currentResult.UserID = nextUserID;
+
+        DbContext.Results.Update(currentResult);
+        await DbContext.SaveChangesAsync();
+    }
+
     private Result getResult(int sessionID)
     {
-        List<Result> all_results = DbContext.Results.ToList();
-
         foreach (Result result in all_results)
         {
             if (result.SessionID == sessionID)
@@ -171,6 +185,19 @@
             }
         }
         return new Result();
+    }
+
+    private User getUser(string email)
+    {
+        getUserListasync();
+        foreach (User u in users)
+        {
+            if (u.Email == email)
+            {
+                return u;
+            }
+        }
+        return null;
     }
 
     private void LogIn()
@@ -182,5 +209,15 @@
     {
         DbContext.Users.Add(newuser);
         await DbContext.SaveChangesAsync();
+    }
+
+    private async Task getUserListasync()
+    {
+        getUserList();
+    }
+
+    private void getUserList()
+    {
+        users = DbContext.Users.ToList();
     }
 }
