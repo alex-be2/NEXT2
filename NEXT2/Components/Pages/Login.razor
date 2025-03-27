@@ -1,7 +1,9 @@
 ﻿@page "/Login/{quizComplete:bool}/{current_session_id:int}"
 @using NEXT2.Components.Layout
+@using NEXT2.Components.Services
 @layout MainLayout
 @using NEXT2.Data
+@using System.Security.Cryptography
 @inject NavigationManager Navigation
 @inject ApplicationDbContext DbContext
 @rendermode InteractiveServer
@@ -87,7 +89,7 @@
                 {
                     foreach (User user in users)
                     {
-                        if (user.Email == email && user.Password == password)
+                        if (user.Email == email && Hasher.Verify(password, user.Password))
                         {
                             if (user.IsRecruiter == 1)
                             {

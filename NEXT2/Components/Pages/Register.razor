@@ -2,6 +2,7 @@
 @using NEXT2.Components.Layout
 @layout MainLayout
 @using NEXT2.Components.Layout
+@using NEXT2.Components.Services
 @using NEXT2.Data
 @inject ApplicationDbContext DbContext
 @inject NavigationManager Navigation
@@ -14,9 +15,9 @@
     <label class="required-field margin-t-50 text-l">Email Address:</label>
     <InputText class="auth-input" @bind-Value="@email"></InputText>
     <label class="required-field text-l">Password:</label>
-    <InputText class="auth-input" @bind-Value="@password"></InputText>
+    <InputText class="auth-input" type="password" @bind-Value="@password"></InputText>
     <label class="required-field text-l">Confirm password:</label>
-    <InputText class="auth-input" @bind-Value="@confirmPassword"></InputText>
+    <InputText class="auth-input" type="password "@bind-Value="@confirmPassword"></InputText>
     @if (alert == 0)
     {
         
@@ -125,6 +126,8 @@
             if (passwordMatch && uniqueEmail)
             {
                 //add to db
+
+                password = Hasher.Hash(password);
 
                 newUser.Email = email;
                 newUser.Password = password;
