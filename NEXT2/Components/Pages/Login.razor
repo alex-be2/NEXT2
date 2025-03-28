@@ -89,7 +89,8 @@
                 {
                     foreach (User user in users)
                     {
-                        if (user.Email == email && Hasher.Verify(password, user.Password))
+                        //if (user.Email == email && Hasher.Verify(password, user.Password))
+                        if (user.Email == email && user.Password == password)
                         {
                             if (user.IsRecruiter == 1)
                             {

@@ -5,7 +5,7 @@
 @using NEXT2.Components.Services
 @using NEXT2.Data
 @inject ApplicationDbContext DbContext
-@inject ApplicationDbContext Db_Context_deleter
+@inject ApplicationDbContext Db_Context_updater
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
@@ -135,23 +135,30 @@
             {
                 //add to db
 
-                password = Hasher.Hash(password);
+                //password = Hasher.Hash(password);
 
                 newUser.Email = email;
                 newUser.Password = password;
 
-                AddUser(newUser);
+                //AddUser(newUser);
+
+                DbContext.Users.Add(newUser);
+                DbContext.SaveChanges();
 
                 // int newUserID = getUser(newUser.Email).userID;
 
 
                 if (quizComplete)
                 {
-                    updateUserId();
+                    //updateUserId();
+                    Result currentResult = getResult(current_session_id);
+                    currentResult.UserID = nextUserID;
+                    Db_Context_updater.Results.Update(currentResult);
+                    Db_Context_updater.SaveChanges();
                 }
                 Navigation.NavigateTo($"/Results/{-1}/{quizComplete}/{nextUserID}");
 
-
+                return;
             }
         }
         else
@@ -212,11 +219,6 @@
     }
 
     private async Task getUserListasync()
-    {
-        getUserList();
-    }
-
-    private void getUserList()
     {
         users = DbContext.Users.ToList();
     }
