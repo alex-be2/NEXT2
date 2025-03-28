@@ -20,9 +20,14 @@
         <img class="background-container" style="width: 100%; color:white; margin: 0;" src="@image_link"/>
     </div>
     <div class="white-container">
-        <div style="background-color: black; border-radius: 5px; height: 40px; border: 3px solid black; margin-bottom: 30px; width: @getCompletion()%">
-            <p style="color: white; top:4px;">@getCompletion()% complete</p>
+        <div class="container-flex">
+            <div style="background-color: #00829b; border-radius: 5px; height: 40px; margin-bottom: 30px; width: @getCompletion()%">
+                <p style="color: white; top:4px;">@getCompletion()% complete</p>
+            </div>
+            <div style="background-color: #f3f3f2; border-top-right-radius: 5px; border-bottom-right-radius:5px; height: 40px; border: 3px solid white; width: @percentLeft()%"> </div>
+
         </div>
+        
         <hr/> 
         <h1>Section @getSecNum()</h1>
         
@@ -184,6 +189,11 @@
             }
         }
         return new Answer();
+    }
+
+    protected string percentLeft()
+    {
+        return (100 - (Math.Round((float.Parse(getSecNum()) - 1) / 4 * 100, 0))).ToString();
     }
 
     protected List<Answer> getAnswers(int q_id) // returns answers for the current question
